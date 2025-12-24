@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>關於我們 - 臺北市立大學募款平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'utaipei': {
+                            'primary': '#1e3a5f',
+                            'secondary': '#2d5a87',
+                            'accent': '#e63946',
+                            'gold': '#d4a84b',
+                            'light': '#f8f9fa'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Noto Sans TC', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [v-cloak] { display: none; }
+
+        /* DEMO Banner */
+        .demo-ribbon {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            overflow: hidden;
+            width: 150px;
+            height: 150px;
+            pointer-events: none;
+        }
+        .demo-ribbon span {
+            position: absolute;
+            display: block;
+            width: 225px;
+            padding: 10px 0;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            text-align: center;
+            left: -55px;
+            top: 35px;
+            transform: rotate(-45deg);
+            letter-spacing: 1px;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 50%, #3d7ab5 100%);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        /* Timeline Styles */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #d4a84b, #1e3a5f);
+            border-radius: 2px;
+        }
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: #d4a84b;
+            border: 4px solid #1e3a5f;
+            border-radius: 50%;
+            z-index: 10;
+        }
+        @media (max-width: 768px) {
+            .timeline-dot {
+                left: 20px;
+            }
+        }
+        .timeline-content {
+            width: 45%;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-left: auto;
+        }
+        @media (max-width: 768px) {
+            .timeline-content {
+                width: calc(100% - 60px);
+                margin-left: 50px !important;
+            }
+        }
+
+        /* FAQ Accordion */
+        .faq-item {
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .faq-question {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .faq-question:hover {
+            color: #2d5a87;
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .faq-answer.open {
+            max-height: 500px;
+        }
+
+        /* Counter Animation */
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .count-up {
+            animation: countUp 0.5s ease-out forwards;
+        }
+
+        /* Pillar Cards */
+        .pillar-card {
+            transition: all 0.4s ease;
+        }
+        .pillar-card:hover {
+            transform: scale(1.05);
+        }
+        .pillar-card:hover .pillar-icon {
+            transform: rotate(10deg) scale(1.1);
+        }
+        .pillar-icon {
+            transition: all 0.4s ease;
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50">
+    <!-- DEMO 標示 -->
+    <div class="demo-ribbon">
+        <span>📋 計中展示版</span>
+    </div>
+
+    <div id="app" v-cloak>
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg sticky top-0 z-50">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between py-4">
+                    <a href="index.html" class="flex items-center space-x-3">
+                        <img src="https://www.utaipei.edu.tw/var/file/0/1000/img/1583/366369593.jpg"
+                             alt="臺北市立大學"
+                             class="h-12 object-contain bg-white rounded px-2">
+                        <div>
+                            <h1 class="text-xl font-bold">臺北市立大學</h1>
+                            <p class="text-sm text-blue-200">募款平台</p>
+                        </div>
+                    </a>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <a href="index.html#projects" class="hover:text-utaipei-gold transition">募款專案</a>
+                        <a href="honor.html" class="hover:text-utaipei-gold transition">芳名錄</a>
+                        <a href="about.html" class="text-utaipei-gold font-medium">關於我們</a>
+                        <a href="donate.html" class="bg-utaipei-accent hover:bg-red-600 px-4 py-2 rounded-full font-medium transition">
+                            立即捐款
+                        </a>
+                    </nav>
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+                <!-- Mobile Menu -->
+                <div v-if="mobileMenuOpen" class="md:hidden pb-4">
+                    <a href="index.html#projects" class="block py-2 hover:text-utaipei-gold">募款專案</a>
+                    <a href="honor.html" class="block py-2 hover:text-utaipei-gold">芳名錄</a>
+                    <a href="about.html" class="block py-2 text-utaipei-gold font-medium">關於我們</a>
+                    <a href="donate.html" class="block py-2 mt-2 bg-utaipei-accent text-center rounded-full">立即捐款</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="gradient-bg text-white py-20 md:py-28 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute top-10 left-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+                <div class="absolute bottom-10 right-10 w-60 h-60 bg-utaipei-gold rounded-full blur-3xl"></div>
+            </div>
+            <div class="container mx-auto px-4 text-center relative z-10">
+                <h2 class="text-3xl md:text-5xl font-bold mb-6">
+                    攜手共築<span class="text-utaipei-gold">北市大</span>的未來
+                </h2>
+                <p class="text-lg md:text-xl text-blue-200 mb-8 max-w-3xl mx-auto leading-relaxed">
+                    傳承 <span class="text-utaipei-gold font-bold">130</span> 年教育薪火，<br class="md:hidden">
+                    我們以「文武雙全」的精神，培育台灣未來的希望。<br>
+                    您的支持，是我們前進的最大動力。
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="donate.html" class="inline-block bg-utaipei-accent hover:bg-red-600 text-white px-8 py-3 rounded-full font-medium text-lg transition transform hover:scale-105">
+                        ❤️ 立即捐款
+                    </a>
+                    <a href="#history" class="inline-block bg-white/20 hover:bg-white/30 text-white px-8 py-3 rounded-full font-medium text-lg transition">
+                        📜 了解校史
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 學校簡介 -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto text-center mb-12">
+                    <h3 class="text-3xl font-bold text-utaipei-primary mb-6">認識臺北市立大學</h3>
+                    <p class="text-gray-600 leading-relaxed text-lg">
+                        臺北市立大學於 <span class="font-bold text-utaipei-primary">2013 年</span> 由
+                        <span class="font-bold text-utaipei-secondary">臺北市立教育大學</span>與
+                        <span class="font-bold text-utaipei-secondary">臺北市立體育學院</span>合併成立。
+                        我們秉持「<span class="text-utaipei-gold font-bold">一文一武</span>」的辦學特色，
+                        在教育與體育領域持續耕耘，培育無數優秀人才。
+                    </p>
+                </div>
+
+                <!-- 關鍵數據卡片 -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="bg-gradient-to-br from-utaipei-primary to-utaipei-secondary rounded-xl p-6 text-white text-center card-hover">
+                        <div class="text-4xl md:text-5xl font-bold mb-2">130<span class="text-2xl">+</span></div>
+                        <div class="text-blue-200">年歷史傳承</div>
+                        <div class="mt-3 text-3xl">🏛️</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-utaipei-gold to-amber-500 rounded-xl p-6 text-white text-center card-hover">
+                        <div class="text-4xl md:text-5xl font-bold mb-2">8,000<span class="text-2xl">+</span></div>
+                        <div class="text-amber-100">在校學生</div>
+                        <div class="mt-3 text-3xl">👨‍🎓</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-utaipei-accent to-rose-500 rounded-xl p-6 text-white text-center card-hover">
+                        <div class="text-4xl md:text-5xl font-bold mb-2">100<span class="text-2xl">+</span></div>
+                        <div class="text-rose-100">奧運選手</div>
+                        <div class="mt-3 text-3xl">🥇</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl p-6 text-white text-center card-hover">
+                        <div class="text-4xl md:text-5xl font-bold mb-2">2</div>
+                        <div class="text-emerald-100">校區據點</div>
+                        <div class="mt-3 text-3xl">🏫</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 百年校史時間軸 -->
+        <section id="history" class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-utaipei-primary mb-4">百年校史</h3>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        從 1895 年芝山巖學堂開始，我們走過百年歲月，見證台灣教育的發展與蛻變。
+                    </p>
+                </div>
+
+                <div class="timeline max-w-4xl mx-auto">
+                    <div v-for="(event, index) in historyEvents" :key="index" class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="text-utaipei-gold font-bold text-xl mb-2">{{ event.year }}</div>
+                            <h4 class="font-bold text-utaipei-primary text-lg mb-2">{{ event.title }}</h4>
+                            <p class="text-gray-600 text-sm">{{ event.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 發展願景三大支柱 -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-utaipei-primary mb-4">發展願景</h3>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        我們以三大發展主軸，打造具有特色的都會型大學
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- 師資培育 -->
+                    <div class="pillar-card bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-8 text-center border-2 border-transparent hover:border-utaipei-primary">
+                        <div class="pillar-icon w-24 h-24 bg-utaipei-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <span class="text-5xl">📚</span>
+                        </div>
+                        <h4 class="text-xl font-bold text-utaipei-primary mb-4">師資培育典範大學</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            承襲百年師範傳統，培育優質教師人才。
+                            我們的畢業生遍布全台各級學校，
+                            是台灣師資培育的重要搖籃。
+                        </p>
+                        <div class="mt-6 flex justify-center gap-2">
+                            <span class="bg-utaipei-primary/10 text-utaipei-primary px-3 py-1 rounded-full text-sm">師培中心</span>
+                            <span class="bg-utaipei-primary/10 text-utaipei-primary px-3 py-1 rounded-full text-sm">教育學院</span>
+                        </div>
+                    </div>
+
+                    <!-- 奪金選手 -->
+                    <div class="pillar-card bg-gradient-to-br from-amber-50 to-orange-100 rounded-2xl p-8 text-center border-2 border-transparent hover:border-utaipei-gold">
+                        <div class="pillar-icon w-24 h-24 bg-utaipei-gold rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <span class="text-5xl">🏅</span>
+                        </div>
+                        <h4 class="text-xl font-bold text-utaipei-primary mb-4">奪金選手重鎮大學</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            孕育無數奧運國手與世界冠軍，
+                            是台灣體育人才的訓練重鎮。
+                            我們以專業訓練與運動科學，助選手登上國際舞台。
+                        </p>
+                        <div class="mt-6 flex justify-center gap-2">
+                            <span class="bg-utaipei-gold/20 text-amber-700 px-3 py-1 rounded-full text-sm">體育學院</span>
+                            <span class="bg-utaipei-gold/20 text-amber-700 px-3 py-1 rounded-full text-sm">競技運動</span>
+                        </div>
+                    </div>
+
+                    <!-- 都會創新 -->
+                    <div class="pillar-card bg-gradient-to-br from-emerald-50 to-teal-100 rounded-2xl p-8 text-center border-2 border-transparent hover:border-emerald-500">
+                        <div class="pillar-icon w-24 h-24 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                            <span class="text-5xl">🌆</span>
+                        </div>
+                        <h4 class="text-xl font-bold text-utaipei-primary mb-4">都會特色創新大學</h4>
+                        <p class="text-gray-600 leading-relaxed">
+                            立足首都，連結產業與社區，
+                            推動產學合作與社會創新。
+                            我們培養學生具備解決都會問題的實戰能力。
+                        </p>
+                        <div class="mt-6 flex justify-center gap-2">
+                            <span class="bg-emerald-500/10 text-emerald-700 px-3 py-1 rounded-full text-sm">產學合作</span>
+                            <span class="bg-emerald-500/10 text-emerald-700 px-3 py-1 rounded-full text-sm">社會創新</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 為什麼捐款 -->
+        <section class="py-16 bg-utaipei-primary text-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold mb-4">為什麼捐款給北市大？</h3>
+                    <p class="text-blue-200 max-w-2xl mx-auto">
+                        您的每一分捐款，都將化為推動學校發展的力量
+                    </p>
+                </div>
+
+                <!-- 影響力卡片 -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-white/20 transition">
+                        <div class="text-5xl mb-4">🎓</div>
+                        <h4 class="font-bold text-lg mb-2">培育人才</h4>
+                        <p class="text-blue-200 text-sm">
+                            獎助學金讓更多優秀學子安心求學，實現夢想
+                        </p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-white/20 transition">
+                        <div class="text-5xl mb-4">🏆</div>
+                        <h4 class="font-bold text-lg mb-2">支持運動員</h4>
+                        <p class="text-blue-200 text-sm">
+                            協助選手訓練、比賽，為台灣爭光
+                        </p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-white/20 transition">
+                        <div class="text-5xl mb-4">💻</div>
+                        <h4 class="font-bold text-lg mb-2">提升教學</h4>
+                        <p class="text-blue-200 text-sm">
+                            更新教學設備，打造現代化學習環境
+                        </p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center hover:bg-white/20 transition">
+                        <div class="text-5xl mb-4">🔬</div>
+                        <h4 class="font-bold text-lg mb-2">推動研究</h4>
+                        <p class="text-blue-200 text-sm">
+                            支持學術研究，創造知識價值
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 透明公開承諾 -->
+                <div class="bg-white rounded-2xl p-8 text-gray-800 max-w-4xl mx-auto">
+                    <h4 class="text-xl font-bold text-utaipei-primary mb-6 text-center">
+                        🔍 透明公開承諾
+                    </h4>
+                    <div class="grid md:grid-cols-4 gap-6 text-center">
+                        <div>
+                            <div class="w-12 h-12 bg-utaipei-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-2xl">📊</span>
+                            </div>
+                            <div class="font-medium">年度財務報告</div>
+                            <div class="text-sm text-gray-500">每年公開</div>
+                        </div>
+                        <div>
+                            <div class="w-12 h-12 bg-utaipei-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-2xl">📋</span>
+                            </div>
+                            <div class="font-medium">專案執行報告</div>
+                            <div class="text-sm text-gray-500">定期更新</div>
+                        </div>
+                        <div>
+                            <div class="w-12 h-12 bg-utaipei-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-2xl">🧾</span>
+                            </div>
+                            <div class="font-medium">捐款收據</div>
+                            <div class="text-sm text-gray-500">可申報所得稅</div>
+                        </div>
+                        <div>
+                            <div class="w-12 h-12 bg-utaipei-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-2xl">🔎</span>
+                            </div>
+                            <div class="font-medium">捐款明細查詢</div>
+                            <div class="text-sm text-gray-500">隨時可查</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 募款成果 -->
+        <section class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-utaipei-primary mb-4">募款成果</h3>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        感謝每一位捐款人的支持，讓我們能持續為學校的發展努力
+                    </p>
+                </div>
+
+                <!-- 統計數據 -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+                    <div class="bg-white rounded-xl p-6 text-center shadow-md">
+                        <div class="text-3xl md:text-4xl font-bold text-utaipei-primary mb-2">${{ formatNumber(stats.totalAmount) }}</div>
+                        <div class="text-gray-500">累計募款金額</div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 text-center shadow-md">
+                        <div class="text-3xl md:text-4xl font-bold text-utaipei-gold mb-2">{{ formatNumber(stats.totalDonors) }}</div>
+                        <div class="text-gray-500">總捐款人數</div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 text-center shadow-md">
+                        <div class="text-3xl md:text-4xl font-bold text-emerald-500 mb-2">{{ stats.completedProjects }}</div>
+                        <div class="text-gray-500">已完成專案</div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 text-center shadow-md">
+                        <div class="text-3xl md:text-4xl font-bold text-utaipei-accent mb-2">{{ stats.ongoingProjects }}</div>
+                        <div class="text-gray-500">進行中專案</div>
+                    </div>
+                </div>
+
+                <!-- 捐款人見證 -->
+                <h4 class="text-xl font-bold text-utaipei-primary mb-6 text-center">💬 捐款人的話</h4>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div v-for="testimonial in testimonials" :key="testimonial.id"
+                         class="bg-white rounded-xl p-6 shadow-md">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-utaipei-gold/20 rounded-full flex items-center justify-center mr-4">
+                                <span class="text-utaipei-gold font-bold text-lg">{{ testimonial.name.charAt(0) }}</span>
+                            </div>
+                            <div>
+                                <div class="font-bold text-gray-800">{{ testimonial.name }}</div>
+                                <div class="text-sm text-gray-500">{{ testimonial.title }}</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 italic leading-relaxed">
+                            「{{ testimonial.quote }}」
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 聯絡團隊 -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-utaipei-primary mb-4">聯絡我們</h3>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        如有任何捐款相關問題，歡迎與我們聯繫
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                    <div class="bg-gray-50 rounded-xl p-6 text-center">
+                        <div class="w-16 h-16 bg-utaipei-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl text-white">🏢</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-utaipei-primary mb-2">秘書室</h4>
+                        <p class="text-gray-600 text-sm mb-3">募款業務諮詢</p>
+                        <p class="text-gray-700">📞 (02) 2311-3040 分機 1111</p>
+                        <p class="text-gray-700">✉️ secretary@utaipei.edu.tw</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-6 text-center">
+                        <div class="w-16 h-16 bg-utaipei-gold rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl text-white">👥</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-utaipei-primary mb-2">校友服務中心</h4>
+                        <p class="text-gray-600 text-sm mb-3">校友捐款服務</p>
+                        <p class="text-gray-700">📞 (02) 2311-3040 分機 2222</p>
+                        <p class="text-gray-700">✉️ alumni@utaipei.edu.tw</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-6 text-center">
+                        <div class="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl text-white">🧾</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-utaipei-primary mb-2">出納組</h4>
+                        <p class="text-gray-600 text-sm mb-3">捐款收據事宜</p>
+                        <p class="text-gray-700">📞 (02) 2311-3040 分機 3333</p>
+                        <p class="text-gray-700">✉️ cashier@utaipei.edu.tw</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold text-utaipei-primary mb-4">常見問題</h3>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        關於捐款的常見疑問，我們在這裡為您解答
+                    </p>
+                </div>
+
+                <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                    <div v-for="(faq, index) in faqs" :key="index" class="faq-item">
+                        <div class="faq-question flex justify-between items-center p-5"
+                             @click="toggleFaq(index)">
+                            <span class="font-medium text-gray-800 pr-4">{{ faq.question }}</span>
+                            <svg class="w-5 h-5 text-gray-500 transition-transform duration-300"
+                                 :class="{ 'rotate-180': faq.open }"
+                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                        <div class="faq-answer px-5 text-gray-600" :class="{ 'open': faq.open }">
+                            <div class="pb-5">{{ faq.answer }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 行動呼籲 CTA -->
+        <section class="py-20 gradient-bg text-white">
+            <div class="container mx-auto px-4 text-center">
+                <h3 class="text-3xl md:text-4xl font-bold mb-6">
+                    每一份愛心，都是改變的力量
+                </h3>
+                <p class="text-xl text-blue-200 mb-8 max-w-2xl mx-auto">
+                    無論金額大小，您的支持都將為北市大的學生帶來希望與機會。<br>
+                    讓我們一起，為教育創造更美好的未來。
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="donate.html" class="inline-block bg-utaipei-accent hover:bg-red-600 text-white px-10 py-4 rounded-full font-bold text-lg transition transform hover:scale-105 shadow-lg">
+                        ❤️ 立即捐款
+                    </a>
+                    <a href="index.html#projects" class="inline-block bg-white text-utaipei-primary hover:bg-gray-100 px-10 py-4 rounded-full font-bold text-lg transition">
+                        📋 瀏覽專案
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-utaipei-primary text-white py-12">
+            <div class="container mx-auto px-4">
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div>
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                                <span class="text-utaipei-primary font-bold">北</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold">臺北市立大學</h3>
+                                <p class="text-sm text-blue-200">募款平台</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-blue-200">
+                            感謝您對北市大的支持與關愛
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-4">快速連結</h4>
+                        <ul class="space-y-2 text-sm text-blue-200">
+                            <li><a href="index.html#projects" class="hover:text-white">募款專案</a></li>
+                            <li><a href="honor.html" class="hover:text-white">芳名錄</a></li>
+                            <li><a href="about.html" class="hover:text-white">關於我們</a></li>
+                            <li><a href="donate.html" class="hover:text-white">立即捐款</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-4">聯絡資訊</h4>
+                        <ul class="space-y-2 text-sm text-blue-200">
+                            <li>📍 臺北市中正區愛國西路一號</li>
+                            <li>📞 (02) 2311-3040</li>
+                            <li>✉️ donate@utaipei.edu.tw</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-4">安全認證</h4>
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-white/10 px-3 py-2 rounded">
+                                <span class="text-sm">🔒 SSL 加密</span>
+                            </div>
+                            <div class="bg-white/10 px-3 py-2 rounded">
+                                <span class="text-sm">💳 藍新金流</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-white/20 mt-8 pt-8 text-center text-sm text-blue-200">
+                    <p>&copy; 2025 臺北市立大學. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const { createApp } = Vue
+
+        createApp({
+            data() {
+                return {
+                    mobileMenuOpen: false,
+                    historyEvents: [
+                        {
+                            year: '1895',
+                            title: '芝山巖學堂創立',
+                            description: '台灣近代教育的起點，六氏先生在芝山巖創立學堂，開啟台灣新式教育的序幕。'
+                        },
+                        {
+                            year: '1896',
+                            title: '國語學校附屬學校',
+                            description: '改制為台灣總督府國語學校附屬學校，正式納入教育體系。'
+                        },
+                        {
+                            year: '1945',
+                            title: '臺北市立女子師範學校',
+                            description: '台灣光復後，改制為臺北市立女子師範學校，肩負師資培育使命。'
+                        },
+                        {
+                            year: '1964',
+                            title: '臺北市立體育專科學校',
+                            description: '創立體育專科學校，開始培育專業體育人才，為台灣體育發展奠定基礎。'
+                        },
+                        {
+                            year: '1987',
+                            title: '臺北市立師範學院',
+                            description: '升格為師範學院，提升師資培育層次，培養更多優質教師。'
+                        },
+                        {
+                            year: '2005',
+                            title: '臺北市立教育大學',
+                            description: '改名為臺北市立教育大學，擴大學術領域，邁向綜合大學。'
+                        },
+                        {
+                            year: '2013',
+                            title: '臺北市立大學成立',
+                            description: '臺北市立教育大學與臺北市立體育學院合併，成立「臺北市立大學」，開創「一文一武」新紀元。'
+                        },
+                        {
+                            year: '2025',
+                            title: '邁向未來',
+                            description: '持續深耕師資培育與體育發展，以創新與卓越，迎接下一個百年。'
+                        }
+                    ],
+                    stats: {
+                        totalAmount: 39700000,
+                        totalDonors: 2856,
+                        completedProjects: 15,
+                        ongoingProjects: 6
+                    },
+                    testimonials: [
+                        {
+                            id: 1,
+                            name: '王○明',
+                            title: '87級校友',
+                            quote: '北市大給了我人生最重要的啟蒙，現在我想把這份恩情傳遞給學弟妹。每年的小額捐款，是我對母校最真摯的感謝。'
+                        },
+                        {
+                            id: 2,
+                            name: '李○華',
+                            title: '企業負責人',
+                            quote: '我們公司長期與北市大產學合作，看到學校培育出的人才，讓我相信每一分捐款都是值得的投資。'
+                        },
+                        {
+                            id: 3,
+                            name: '陳○芳',
+                            title: '退休教師',
+                            quote: '身為北市大培育的教師，我見證了無數學生因為獎學金而能安心求學。現在換我來支持這些孩子的夢想。'
+                        }
+                    ],
+                    faqs: [
+                        {
+                            question: '捐款可以抵稅嗎？',
+                            answer: '可以。臺北市立大學為政府立案之公立大學，依據所得稅法第17條及第36條規定，個人捐款可列舉扣除，企業捐款可全額列為費用。我們會開立正式捐款收據，供您報稅使用。',
+                            open: false
+                        },
+                        {
+                            question: '可以指定捐款用途嗎？',
+                            answer: '可以。您可以選擇特定的募款專案進行捐款，款項將專款專用於您指定的用途。若您希望由學校統籌運用，也可以選擇「校務發展基金」。',
+                            open: false
+                        },
+                        {
+                            question: '有哪些付款方式？',
+                            answer: '我們提供多元的付款方式：信用卡（VISA、MasterCard、JCB）、ATM 轉帳、超商代碼繳費、LINE Pay。所有付款均透過藍新金流安全處理。',
+                            open: false
+                        },
+                        {
+                            question: '可以定期定額捐款嗎？',
+                            answer: '可以。您可以設定每月固定金額的定期捐款，系統會在每月固定日期自動從您的信用卡扣款。您可以隨時登入系統調整金額或取消定期捐款。',
+                            open: false
+                        },
+                        {
+                            question: '企業捐款有什麼優惠？',
+                            answer: '企業捐款可全額列為營業費用，且不受金額限制。我們也提供企業冠名、聯合活動等合作方案，歡迎與秘書室洽詢客製化的企業捐款方案。',
+                            open: false
+                        },
+                        {
+                            question: '海外捐款如何進行？',
+                            answer: '海外捐款人可透過信用卡線上捐款，系統支援國際卡片。若需要電匯方式，請與秘書室聯繫取得學校外幣帳戶資訊。',
+                            open: false
+                        },
+                        {
+                            question: '如何查詢我的捐款紀錄？',
+                            answer: '您可以登入募款平台會員中心，查詢歷年捐款紀錄、下載電子收據。若需補發實體收據，請與出納組聯繫。',
+                            open: false
+                        },
+                        {
+                            question: '捐款收據何時寄送？',
+                            answer: '線上捐款完成後，系統會立即寄送電子收據至您的 Email。實體收據將於捐款完成後 14 個工作天內寄出。如有特殊需求，請與出納組聯繫。',
+                            open: false
+                        }
+                    ]
+                }
+            },
+            methods: {
+                formatNumber(num) {
+                    return num.toLocaleString()
+                },
+                toggleFaq(index) {
+                    this.faqs[index].open = !this.faqs[index].open
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
