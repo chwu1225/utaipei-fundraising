@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>捐款 - 臺北市立大學募款平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'utaipei': {
+                            'primary': '#1e3a5f',
+                            'secondary': '#2d5a87',
+                            'accent': '#e63946',
+                            'gold': '#d4a84b',
+                            'light': '#f8f9fa'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Noto Sans TC', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [v-cloak] { display: none; }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 50%, #3d7ab5 100%);
+        }
+
+        .amount-btn {
+            transition: all 0.2s ease;
+        }
+
+        .amount-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .amount-btn.active {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.3);
+        }
+
+        .step-indicator {
+            transition: all 0.3s ease;
+        }
+
+        .payment-option {
+            transition: all 0.2s ease;
+        }
+
+        .payment-option:hover {
+            border-color: #1e3a5f;
+        }
+
+        .payment-option.selected {
+            border-color: #e63946;
+            background-color: #fef2f2;
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50 min-h-screen">
+    <div id="app" v-cloak>
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between py-4">
+                    <a href="index.html" class="flex items-center space-x-3">
+                        <img src="https://www.utaipei.edu.tw/var/file/0/1000/img/1583/366369593.jpg"
+                             alt="臺北市立大學"
+                             class="h-10 object-contain bg-white rounded px-2">
+                        <div>
+                            <h1 class="text-lg font-bold">臺北市立大學</h1>
+                            <p class="text-xs text-blue-200">募款平台</p>
+                        </div>
+                    </a>
+                    <a href="index.html" class="text-blue-200 hover:text-white flex items-center">
+                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        返回首頁
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <main class="container mx-auto px-4 py-8">
+            <!-- 步驟指示器 -->
+            <div class="max-w-3xl mx-auto mb-8">
+                <div class="flex items-center justify-center">
+                    <div v-for="(stepName, index) in ['選擇金額', '填寫資料', '確認付款']" :key="index"
+                         class="flex items-center">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all"
+                                 :class="step > index ? 'bg-green-500 text-white' : step === index + 1 ? 'bg-utaipei-accent text-white' : 'bg-gray-200 text-gray-500'">
+                                <span v-if="step > index">✓</span>
+                                <span v-else>{{ index + 1 }}</span>
+                            </div>
+                            <span class="ml-2 text-sm font-medium"
+                                  :class="step >= index + 1 ? 'text-utaipei-primary' : 'text-gray-400'">
+                                {{ stepName }}
+                            </span>
+                        </div>
+                        <div v-if="index < 2" class="w-16 md:w-24 h-1 mx-2 rounded"
+                             :class="step > index + 1 ? 'bg-green-500' : 'bg-gray-200'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- 左側：捐款表單 -->
+                    <div class="md:col-span-2">
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                            <!-- Step 1: 選擇金額 -->
+                            <div v-if="step === 1" class="p-6 md:p-8">
+                                <h2 class="text-2xl font-bold text-utaipei-primary mb-6">選擇捐款金額</h2>
+
+                                <!-- 捐款類型 -->
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-gray-700 mb-3">捐款類型</label>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <button @click="donationType = 'once'"
+                                                class="py-3 px-4 rounded-lg border-2 font-medium transition"
+                                                :class="donationType === 'once' ? 'border-utaipei-accent bg-red-50 text-utaipei-accent' : 'border-gray-200 text-gray-600 hover:border-gray-300'">
+                                            單次捐款
+                                        </button>
+                                        <button @click="donationType = 'monthly'"
+                                                class="py-3 px-4 rounded-lg border-2 font-medium transition"
+                                                :class="donationType === 'monthly' ? 'border-utaipei-accent bg-red-50 text-utaipei-accent' : 'border-gray-200 text-gray-600 hover:border-gray-300'">
+                                            定期定額（每月）
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- 預設金額選項 -->
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-gray-700 mb-3">選擇金額</label>
+                                    <div class="grid grid-cols-3 gap-3">
+                                        <button v-for="amt in [500, 1000, 2000, 3000, 5000, 10000]"
+                                                :key="amt"
+                                                @click="selectAmount(amt)"
+                                                class="py-4 rounded-lg border-2 font-bold amount-btn"
+                                                :class="amount === amt && !customAmount ? 'border-utaipei-accent bg-red-50 text-utaipei-accent active' : 'border-gray-200 text-gray-700 hover:border-utaipei-secondary'">
+                                            ${{ amt.toLocaleString() }}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- 自訂金額 -->
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">或輸入其他金額</label>
+                                    <div class="relative">
+                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">NT$</span>
+                                        <input type="number"
+                                               v-model="customAmount"
+                                               @focus="amount = null"
+                                               placeholder="輸入金額"
+                                               min="100"
+                                               class="w-full pl-16 pr-4 py-4 border-2 rounded-lg text-lg font-bold focus:border-utaipei-accent focus:ring-0 outline-none transition">
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">最低捐款金額 NT$100</p>
+                                </div>
+
+                                <button @click="nextStep"
+                                        :disabled="!finalAmount || finalAmount < 100"
+                                        class="w-full py-4 rounded-lg font-bold text-lg transition"
+                                        :class="finalAmount && finalAmount >= 100 ? 'bg-utaipei-primary hover:bg-utaipei-secondary text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'">
+                                    下一步：填寫資料
+                                </button>
+                            </div>
+
+                            <!-- Step 2: 填寫資料 -->
+                            <div v-if="step === 2" class="p-6 md:p-8">
+                                <h2 class="text-2xl font-bold text-utaipei-primary mb-6">填寫捐款人資料</h2>
+
+                                <div class="space-y-5">
+                                    <!-- 姓名 -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            姓名 <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="text" v-model="donor.name" required
+                                               class="w-full px-4 py-3 border rounded-lg focus:border-utaipei-accent focus:ring-0 outline-none transition"
+                                               placeholder="請輸入真實姓名">
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            電子郵件 <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="email" v-model="donor.email" required
+                                               class="w-full px-4 py-3 border rounded-lg focus:border-utaipei-accent focus:ring-0 outline-none transition"
+                                               placeholder="用於接收收據和捐款確認">
+                                    </div>
+
+                                    <!-- 手機 -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            手機號碼 <span class="text-red-500">*</span>
+                                        </label>
+                                        <input type="tel" v-model="donor.phone" required
+                                               class="w-full px-4 py-3 border rounded-lg focus:border-utaipei-accent focus:ring-0 outline-none transition"
+                                               placeholder="09XX-XXX-XXX">
+                                    </div>
+
+                                    <!-- 是否需要收據 -->
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="checkbox" v-model="donor.needReceipt"
+                                                   class="w-5 h-5 rounded border-gray-300 text-utaipei-accent focus:ring-utaipei-accent">
+                                            <span class="ml-3 font-medium">我需要捐款收據（可報稅）</span>
+                                        </label>
+
+                                        <div v-if="donor.needReceipt" class="mt-4 space-y-4 pl-8">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                                    身分證字號 / 統一編號 <span class="text-red-500">*</span>
+                                                </label>
+                                                <input type="text" v-model="donor.idNumber"
+                                                       class="w-full px-4 py-3 border rounded-lg focus:border-utaipei-accent focus:ring-0 outline-none transition"
+                                                       placeholder="報稅用途">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                                    收據寄送地址
+                                                </label>
+                                                <input type="text" v-model="donor.address"
+                                                       class="w-full px-4 py-3 border rounded-lg focus:border-utaipei-accent focus:ring-0 outline-none transition"
+                                                       placeholder="如需紙本收據請填寫">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 匿名捐款選項 -->
+                                    <div class="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="checkbox" v-model="donor.isAnonymous"
+                                                   class="w-5 h-5 rounded border-gray-300 text-utaipei-gold focus:ring-utaipei-gold">
+                                            <span class="ml-3 font-medium">🙈 我要匿名捐款</span>
+                                        </label>
+                                        <p class="text-xs text-gray-500 mt-2 ml-8">勾選後，您的姓名將不會顯示在芳名錄及捐款動態中</p>
+
+                                        <div v-if="donor.isAnonymous" class="mt-3 ml-8 p-3 bg-white rounded border border-yellow-100">
+                                            <p class="text-sm text-gray-600">
+                                                <span class="font-medium text-utaipei-gold">匿名捐款說明：</span><br>
+                                                • 您的個人資料僅供開立收據使用<br>
+                                                • 芳名錄將顯示為「匿名善心人士」<br>
+                                                • 學校仍會寄送感謝函至您的信箱
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- 是否公開芳名錄 -->
+                                    <div v-if="!donor.isAnonymous" class="bg-gray-50 rounded-lg p-4">
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="checkbox" v-model="donor.showInHonorRoll"
+                                                   class="w-5 h-5 rounded border-gray-300 text-utaipei-accent focus:ring-utaipei-accent">
+                                            <span class="ml-3 font-medium">同意將姓名公開於芳名錄</span>
+                                        </label>
+                                        <p class="text-xs text-gray-500 mt-2 ml-8">僅顯示姓氏，如「王○明」</p>
+                                    </div>
+
+                                    <!-- 捐款留言 -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            捐款留言（選填）
+                                        </label>
+                                        <textarea v-model="donor.message" rows="3"
+                                                  class="w-full px-4 py-3 border rounded-lg focus:border-utaipei-accent focus:ring-0 outline-none transition resize-none"
+                                                  placeholder="寫下您對北市大的祝福..."></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="flex space-x-4 mt-8">
+                                    <button @click="step = 1"
+                                            class="flex-1 py-4 rounded-lg font-bold border-2 border-gray-200 text-gray-600 hover:border-gray-300 transition">
+                                        上一步
+                                    </button>
+                                    <button @click="nextStep"
+                                            :disabled="!isFormValid"
+                                            class="flex-1 py-4 rounded-lg font-bold transition"
+                                            :class="isFormValid ? 'bg-utaipei-primary hover:bg-utaipei-secondary text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'">
+                                        下一步：確認付款
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Step 3: 確認付款 -->
+                            <div v-if="step === 3" class="p-6 md:p-8">
+                                <h2 class="text-2xl font-bold text-utaipei-primary mb-6">確認並付款</h2>
+
+                                <!-- 捐款摘要 -->
+                                <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                                    <h3 class="font-bold text-lg mb-4">捐款摘要</h3>
+                                    <div class="space-y-3">
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">捐款專案</span>
+                                            <span class="font-medium">{{ selectedProject.name }}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">捐款類型</span>
+                                            <span class="font-medium">{{ donationType === 'once' ? '單次捐款' : '定期定額（每月）' }}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">捐款人</span>
+                                            <span class="font-medium">{{ donor.name }}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">電子郵件</span>
+                                            <span class="font-medium">{{ donor.email }}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">需要收據</span>
+                                            <span class="font-medium">{{ donor.needReceipt ? '是' : '否' }}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">匿名捐款</span>
+                                            <span class="font-medium" :class="donor.isAnonymous ? 'text-utaipei-gold' : ''">
+                                                {{ donor.isAnonymous ? '🙈 是（不公開姓名）' : '否' }}
+                                            </span>
+                                        </div>
+                                        <div class="border-t pt-3 mt-3">
+                                            <div class="flex justify-between text-lg">
+                                                <span class="font-bold">捐款金額</span>
+                                                <span class="font-bold text-utaipei-accent">NT$ {{ finalAmount.toLocaleString() }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 付款方式 -->
+                                <div class="mb-6">
+                                    <h3 class="font-bold text-lg mb-4">選擇付款方式</h3>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                        <div v-for="method in paymentMethods" :key="method.id"
+                                             @click="paymentMethod = method.id"
+                                             class="payment-option border-2 rounded-lg p-4 cursor-pointer text-center"
+                                             :class="paymentMethod === method.id ? 'selected' : ''">
+                                            <div class="text-2xl mb-2">{{ method.icon }}</div>
+                                            <div class="text-sm font-medium">{{ method.name }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 同意條款 -->
+                                <div class="mb-6">
+                                    <label class="flex items-start cursor-pointer">
+                                        <input type="checkbox" v-model="agreeTerms"
+                                               class="w-5 h-5 rounded border-gray-300 text-utaipei-accent focus:ring-utaipei-accent mt-0.5">
+                                        <span class="ml-3 text-sm text-gray-600">
+                                            我已閱讀並同意
+                                            <a href="#" class="text-utaipei-accent hover:underline">捐款注意事項</a>
+                                            及
+                                            <a href="#" class="text-utaipei-accent hover:underline">個人資料使用聲明</a>
+                                        </span>
+                                    </label>
+                                </div>
+
+                                <div class="flex space-x-4">
+                                    <button @click="step = 2"
+                                            class="flex-1 py-4 rounded-lg font-bold border-2 border-gray-200 text-gray-600 hover:border-gray-300 transition">
+                                        上一步
+                                    </button>
+                                    <button @click="submitDonation"
+                                            :disabled="!paymentMethod || !agreeTerms"
+                                            class="flex-1 py-4 rounded-lg font-bold transition"
+                                            :class="paymentMethod && agreeTerms ? 'bg-utaipei-accent hover:bg-red-600 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'">
+                                        立即捐款 NT$ {{ finalAmount.toLocaleString() }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右側：專案資訊 -->
+                    <div class="md:col-span-1">
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden sticky top-24">
+                            <div class="h-32 bg-gradient-to-br flex items-center justify-center"
+                                 :class="selectedProject.gradientClass">
+                                <span class="text-5xl">{{ selectedProject.icon }}</span>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-bold text-lg text-utaipei-primary mb-2">
+                                    {{ selectedProject.name }}
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-4">
+                                    {{ selectedProject.description }}
+                                </p>
+
+                                <!-- 進度條 -->
+                                <div class="mb-4">
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-gray-500">募款進度</span>
+                                        <span class="font-bold text-utaipei-accent">{{ selectedProject.progress }}%</span>
+                                    </div>
+                                    <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-gradient-to-r from-utaipei-accent to-utaipei-gold rounded-full"
+                                             :style="{ width: selectedProject.progress + '%' }">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="text-sm text-gray-500 space-y-1">
+                                    <div class="flex justify-between">
+                                        <span>已募得</span>
+                                        <span class="font-medium text-gray-700">${{ selectedProject.raised.toLocaleString() }}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>目標金額</span>
+                                        <span class="font-medium text-gray-700">${{ selectedProject.goal.toLocaleString() }}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>捐款人數</span>
+                                        <span class="font-medium text-gray-700">{{ selectedProject.donors }} 人</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span>截止日期</span>
+                                        <span class="font-medium text-gray-700">{{ selectedProject.deadline }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 安全保證 -->
+                        <div class="bg-white rounded-xl shadow-lg p-5 mt-4">
+                            <h4 class="font-bold mb-3 flex items-center">
+                                <span class="text-green-500 mr-2">🔒</span>
+                                安全保證
+                            </h4>
+                            <ul class="text-sm text-gray-600 space-y-2">
+                                <li class="flex items-center">
+                                    <span class="text-green-500 mr-2">✓</span>
+                                    SSL 256位元加密傳輸
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="text-green-500 mr-2">✓</span>
+                                    藍新金流安全認證
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="text-green-500 mr-2">✓</span>
+                                    個資保護符合法規
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 捐款成功彈窗 -->
+        <div v-if="showSuccess" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-2xl max-w-md w-full p-8 text-center animate-bounce-in">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span class="text-5xl">🎉</span>
+                </div>
+                <h2 class="text-2xl font-bold text-utaipei-primary mb-2">感謝您的捐款！</h2>
+                <p class="text-gray-600 mb-6">
+                    您的愛心將為北市大帶來正向改變。<br>
+                    捐款收據將於 3-5 個工作天內寄送至您的信箱。
+                </p>
+                <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                    <div class="text-sm text-gray-500">捐款金額</div>
+                    <div class="text-3xl font-bold text-utaipei-accent">NT$ {{ finalAmount.toLocaleString() }}</div>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="index.html" class="flex-1 py-3 rounded-lg border-2 border-gray-200 text-gray-600 font-medium hover:border-gray-300 transition">
+                        返回首頁
+                    </a>
+                    <a href="honor.html" class="flex-1 py-3 rounded-lg bg-utaipei-primary text-white font-medium hover:bg-utaipei-secondary transition">
+                        查看芳名錄
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue
+
+        createApp({
+            data() {
+                return {
+                    step: 1,
+                    donationType: 'once',
+                    amount: null,
+                    customAmount: null,
+                    donor: {
+                        name: '',
+                        email: '',
+                        phone: '',
+                        needReceipt: true,
+                        idNumber: '',
+                        address: '',
+                        isAnonymous: false,
+                        showInHonorRoll: true,
+                        message: ''
+                    },
+                    paymentMethod: null,
+                    agreeTerms: false,
+                    showSuccess: false,
+                    projects: [
+                        {
+                            id: 1,
+                            name: '體育選手培訓基金',
+                            icon: '🏆',
+                            description: '支持校隊選手訓練、比賽器材購置及國內外賽事參與。',
+                            goal: 2000000,
+                            raised: 1520000,
+                            donors: 234,
+                            deadline: '2025-06-30',
+                            progress: 76,
+                            gradientClass: 'from-amber-400 to-orange-500'
+                        },
+                        {
+                            id: 2,
+                            name: '學生獎學金',
+                            icon: '🎓',
+                            description: '獎勵學業優異、品德兼優的在校學生。',
+                            goal: 1000000,
+                            raised: 680000,
+                            donors: 156,
+                            deadline: '2025-08-31',
+                            progress: 68,
+                            gradientClass: 'from-blue-400 to-indigo-500'
+                        },
+                        {
+                            id: 3,
+                            name: '教學設備更新',
+                            icon: '💻',
+                            description: '升級教室多媒體設備、實驗室器材及數位學習資源。',
+                            goal: 1500000,
+                            raised: 420000,
+                            donors: 89,
+                            deadline: '2025-12-31',
+                            progress: 28,
+                            gradientClass: 'from-cyan-400 to-blue-500'
+                        },
+                        {
+                            id: 4,
+                            name: '學術研究發展',
+                            icon: '🔬',
+                            description: '支持教師學術研究計畫、論文發表及國際學術交流。',
+                            goal: 800000,
+                            raised: 350000,
+                            donors: 67,
+                            deadline: '2025-09-30',
+                            progress: 44,
+                            gradientClass: 'from-purple-400 to-pink-500'
+                        },
+                        {
+                            id: 5,
+                            name: '校園環境改善',
+                            icon: '🌳',
+                            description: '校園綠化美化、無障礙設施改善及休憩空間建置。',
+                            goal: 600000,
+                            raised: 520000,
+                            donors: 112,
+                            deadline: '2025-04-30',
+                            progress: 87,
+                            gradientClass: 'from-green-400 to-emerald-500'
+                        },
+                        {
+                            id: 6,
+                            name: '弱勢學生助學金',
+                            icon: '💝',
+                            description: '協助經濟弱勢學生安心就學，提供生活及學習補助。',
+                            goal: 500000,
+                            raised: 480000,
+                            donors: 198,
+                            deadline: '2025-03-31',
+                            progress: 96,
+                            gradientClass: 'from-rose-400 to-red-500'
+                        }
+                    ],
+                    paymentMethods: [
+                        { id: 'credit', name: '信用卡', icon: '💳' },
+                        { id: 'atm', name: 'ATM 轉帳', icon: '🏧' },
+                        { id: 'cvs', name: '超商代碼', icon: '🏪' },
+                        { id: 'linepay', name: 'LINE Pay', icon: '💚' }
+                    ],
+                    selectedProjectId: 1
+                }
+            },
+            computed: {
+                finalAmount() {
+                    return this.customAmount || this.amount || 0
+                },
+                selectedProject() {
+                    return this.projects.find(p => p.id === this.selectedProjectId) || this.projects[0]
+                },
+                isFormValid() {
+                    const basic = this.donor.name && this.donor.email && this.donor.phone
+                    if (this.donor.needReceipt) {
+                        return basic && this.donor.idNumber
+                    }
+                    return basic
+                }
+            },
+            methods: {
+                selectAmount(amt) {
+                    this.amount = amt
+                    this.customAmount = null
+                },
+                nextStep() {
+                    if (this.step === 1 && this.finalAmount >= 100) {
+                        this.step = 2
+                    } else if (this.step === 2 && this.isFormValid) {
+                        this.step = 3
+                    }
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                },
+                submitDonation() {
+                    // 模擬付款成功
+                    this.showSuccess = true
+                }
+            },
+            mounted() {
+                // 從 URL 取得專案 ID
+                const urlParams = new URLSearchParams(window.location.search)
+                const projectId = parseInt(urlParams.get('project'))
+                if (projectId && this.projects.find(p => p.id === projectId)) {
+                    this.selectedProjectId = projectId
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>

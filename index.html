@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>臺北市立大學募款平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'utaipei': {
+                            'primary': '#1e3a5f',
+                            'secondary': '#2d5a87',
+                            'accent': '#e63946',
+                            'gold': '#d4a84b',
+                            'light': '#f8f9fa'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Noto Sans TC', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [v-cloak] { display: none; }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.5s ease-in-out;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 50%, #3d7ab5 100%);
+        }
+
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .count-up {
+            animation: countUp 0.5s ease-out forwards;
+        }
+
+        .donation-feed-item {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50">
+    <div id="app" v-cloak>
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg sticky top-0 z-50">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between py-4">
+                    <div class="flex items-center space-x-3">
+                        <img src="https://www.utaipei.edu.tw/var/file/0/1000/img/1583/366369593.jpg"
+                             alt="臺北市立大學"
+                             class="h-12 object-contain bg-white rounded px-2">
+                        <div>
+                            <h1 class="text-xl font-bold">臺北市立大學</h1>
+                            <p class="text-sm text-blue-200">募款平台</p>
+                        </div>
+                    </div>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <a href="#projects" class="hover:text-utaipei-gold transition">募款專案</a>
+                        <a href="honor.html" class="hover:text-utaipei-gold transition">芳名錄</a>
+                        <a href="#about" class="hover:text-utaipei-gold transition">關於我們</a>
+                        <a href="#" class="bg-utaipei-accent hover:bg-red-600 px-4 py-2 rounded-full font-medium transition">
+                            登入
+                        </a>
+                    </nav>
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="gradient-bg text-white py-16 md:py-24">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4">
+                    為北市大的未來<br class="md:hidden">注入力量
+                </h2>
+                <p class="text-lg md:text-xl text-blue-200 mb-8 max-w-2xl mx-auto">
+                    您的每一份捐款，都是推動學校發展的重要動力。<br>
+                    讓我們一起為學生創造更好的學習環境。
+                </p>
+
+                <!-- 總募款進度 -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 max-w-3xl mx-auto mb-8">
+                    <div class="grid grid-cols-3 gap-4 md:gap-8 text-center">
+                        <div>
+                            <div class="text-2xl md:text-4xl font-bold text-utaipei-gold">
+                                ${{ formatNumber(totalRaised) }}
+                            </div>
+                            <div class="text-sm text-blue-200">已募得金額</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl md:text-4xl font-bold text-utaipei-gold">
+                                {{ totalDonors }}
+                            </div>
+                            <div class="text-sm text-blue-200">捐款人數</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl md:text-4xl font-bold text-utaipei-gold">
+                                {{ projects.length }}
+                            </div>
+                            <div class="text-sm text-blue-200">進行中專案</div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="#projects" class="inline-block bg-utaipei-accent hover:bg-red-600 text-white px-8 py-3 rounded-full font-medium text-lg transition transform hover:scale-105">
+                    立即捐款
+                </a>
+            </div>
+        </section>
+
+        <!-- 最近捐款動態 -->
+        <section class="bg-utaipei-gold/10 py-4 overflow-hidden">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center space-x-4">
+                    <span class="bg-utaipei-gold text-white px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap">
+                        最新捐款
+                    </span>
+                    <div class="flex-1 overflow-hidden">
+                        <div class="flex items-center space-x-6 animate-marquee">
+                            <span v-for="donation in recentDonations" :key="donation.id" class="whitespace-nowrap text-gray-700">
+                                <span class="font-medium">{{ donation.name }}</span>
+                                捐款 <span class="text-utaipei-accent font-bold">${{ formatNumber(donation.amount) }}</span>
+                                給 {{ donation.project }}
+                                <span class="text-gray-400 text-sm">（{{ donation.time }}）</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 募款專案列表 -->
+        <section id="projects" class="py-16 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-utaipei-primary mb-4">募款專案</h2>
+                    <p class="text-gray-600 max-w-2xl mx-auto">
+                        選擇您想支持的專案，每一份捐款都將用於指定用途，並定期公開使用報告。
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div v-for="project in projects" :key="project.id"
+                         class="bg-white rounded-xl shadow-md overflow-hidden card-hover">
+                        <!-- 專案圖片 -->
+                        <div class="h-48 bg-gradient-to-br relative"
+                             :class="project.gradientClass">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-6xl">{{ project.icon }}</span>
+                            </div>
+                            <div class="absolute top-4 right-4">
+                                <span v-if="project.isUrgent"
+                                      class="bg-utaipei-accent text-white px-3 py-1 rounded-full text-xs font-medium animate-pulse">
+                                    急需支援
+                                </span>
+                                <span v-else-if="project.progress >= 80"
+                                      class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                                    即將達標
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- 專案內容 -->
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-utaipei-primary mb-2">
+                                {{ project.name }}
+                            </h3>
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-2">
+                                {{ project.description }}
+                            </p>
+
+                            <!-- 進度條 -->
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span class="text-gray-500">募款進度</span>
+                                    <span class="font-bold" :class="project.progress >= 100 ? 'text-green-500' : 'text-utaipei-accent'">
+                                        {{ project.progress }}%
+                                    </span>
+                                </div>
+                                <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full rounded-full transition-all duration-500"
+                                         :class="project.progress >= 100 ? 'bg-green-500' : 'bg-gradient-to-r from-utaipei-accent to-utaipei-gold'"
+                                         :style="{ width: Math.min(project.progress, 100) + '%' }">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 金額資訊 -->
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <div class="text-lg font-bold text-utaipei-primary">
+                                        ${{ formatNumber(project.raised) }}
+                                    </div>
+                                    <div class="text-xs text-gray-500">
+                                        目標 ${{ formatNumber(project.goal) }}
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-lg font-bold text-gray-700">
+                                        {{ project.donors }}
+                                    </div>
+                                    <div class="text-xs text-gray-500">位捐款人</div>
+                                </div>
+                            </div>
+
+                            <!-- 截止日期 -->
+                            <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                                <span>📅 截止日期：{{ project.deadline }}</span>
+                                <span>⏰ 剩餘 {{ project.daysLeft }} 天</span>
+                            </div>
+
+                            <!-- 捐款按鈕 -->
+                            <a :href="'donate.html?project=' + project.id"
+                               class="block w-full text-center py-3 rounded-lg font-medium transition"
+                               :class="project.progress >= 100
+                                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                   : 'bg-utaipei-primary hover:bg-utaipei-secondary text-white'">
+                                {{ project.progress >= 100 ? '已達標 🎉' : '立即捐款' }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 捐款流程說明 -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center text-utaipei-primary mb-12">捐款流程</h2>
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-utaipei-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl">1️⃣</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">選擇專案</h3>
+                        <p class="text-gray-600 text-sm">瀏覽並選擇您想支持的募款專案</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-utaipei-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl">2️⃣</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">填寫資料</h3>
+                        <p class="text-gray-600 text-sm">輸入捐款金額和個人資料</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-utaipei-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl">3️⃣</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">線上付款</h3>
+                        <p class="text-gray-600 text-sm">透過安全金流完成付款</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-utaipei-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl">4️⃣</span>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">收到收據</h3>
+                        <p class="text-gray-600 text-sm">取得捐款收據（可報稅）</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 即時捐款動態側邊欄 -->
+        <div class="fixed right-4 bottom-4 z-40">
+            <div v-if="showDonationFeed"
+                 class="bg-white rounded-xl shadow-2xl w-80 max-h-96 overflow-hidden">
+                <div class="bg-utaipei-primary text-white px-4 py-3 flex justify-between items-center">
+                    <span class="font-medium">💝 即時捐款動態</span>
+                    <button @click="showDonationFeed = false" class="hover:text-utaipei-gold">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="divide-y max-h-72 overflow-y-auto">
+                    <div v-for="donation in recentDonations" :key="donation.id"
+                         class="px-4 py-3 donation-feed-item hover:bg-gray-50">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-utaipei-gold/20 rounded-full flex items-center justify-center">
+                                <span class="text-utaipei-gold font-bold">{{ donation.name.charAt(0) }}</span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-medium text-gray-800">{{ donation.name }}</div>
+                                <div class="text-sm text-gray-500">
+                                    捐款 <span class="text-utaipei-accent font-bold">${{ formatNumber(donation.amount) }}</span>
+                                </div>
+                                <div class="text-xs text-gray-400">{{ donation.project }} · {{ donation.time }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button v-else @click="showDonationFeed = true"
+                    class="bg-utaipei-primary hover:bg-utaipei-secondary text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition transform hover:scale-110">
+                <span class="text-2xl">💝</span>
+            </button>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-utaipei-primary text-white py-12">
+            <div class="container mx-auto px-4">
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div>
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                                <span class="text-utaipei-primary font-bold">北</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold">臺北市立大學</h3>
+                                <p class="text-sm text-blue-200">募款平台</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-blue-200">
+                            感謝您對北市大的支持與關愛
+                        </p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-4">快速連結</h4>
+                        <ul class="space-y-2 text-sm text-blue-200">
+                            <li><a href="#projects" class="hover:text-white">募款專案</a></li>
+                            <li><a href="honor.html" class="hover:text-white">芳名錄</a></li>
+                            <li><a href="#" class="hover:text-white">捐款紀錄查詢</a></li>
+                            <li><a href="#" class="hover:text-white">收據補發</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-4">聯絡資訊</h4>
+                        <ul class="space-y-2 text-sm text-blue-200">
+                            <li>📍 臺北市中正區愛國西路一號</li>
+                            <li>📞 (02) 2311-3040</li>
+                            <li>✉️ donate@utaipei.edu.tw</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold mb-4">安全認證</h4>
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-white/10 px-3 py-2 rounded">
+                                <span class="text-sm">🔒 SSL 加密</span>
+                            </div>
+                            <div class="bg-white/10 px-3 py-2 rounded">
+                                <span class="text-sm">💳 藍新金流</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-white/20 mt-8 pt-8 text-center text-sm text-blue-200">
+                    <p>&copy; 2025 臺北市立大學. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const { createApp } = Vue
+
+        createApp({
+            data() {
+                return {
+                    mobileMenuOpen: false,
+                    showDonationFeed: false,
+                    projects: [
+                        {
+                            id: 1,
+                            name: '體育選手培訓基金',
+                            icon: '🏆',
+                            description: '支持校隊選手訓練、比賽器材購置及國內外賽事參與，培育優秀運動人才。',
+                            goal: 2000000,
+                            raised: 1520000,
+                            donors: 234,
+                            deadline: '2025-06-30',
+                            daysLeft: 188,
+                            isUrgent: false,
+                            gradientClass: 'from-amber-400 to-orange-500'
+                        },
+                        {
+                            id: 2,
+                            name: '學生獎學金',
+                            icon: '🎓',
+                            description: '獎勵學業優異、品德兼優的在校學生，鼓勵學生追求卓越。',
+                            goal: 1000000,
+                            raised: 680000,
+                            donors: 156,
+                            deadline: '2025-08-31',
+                            daysLeft: 250,
+                            isUrgent: false,
+                            gradientClass: 'from-blue-400 to-indigo-500'
+                        },
+                        {
+                            id: 3,
+                            name: '教學設備更新',
+                            icon: '💻',
+                            description: '升級教室多媒體設備、實驗室器材及數位學習資源，提升教學品質。',
+                            goal: 1500000,
+                            raised: 420000,
+                            donors: 89,
+                            deadline: '2025-12-31',
+                            daysLeft: 372,
+                            isUrgent: true,
+                            gradientClass: 'from-cyan-400 to-blue-500'
+                        },
+                        {
+                            id: 4,
+                            name: '學術研究發展',
+                            icon: '🔬',
+                            description: '支持教師學術研究計畫、論文發表及國際學術交流活動。',
+                            goal: 800000,
+                            raised: 350000,
+                            donors: 67,
+                            deadline: '2025-09-30',
+                            daysLeft: 280,
+                            isUrgent: false,
+                            gradientClass: 'from-purple-400 to-pink-500'
+                        },
+                        {
+                            id: 5,
+                            name: '校園環境改善',
+                            icon: '🌳',
+                            description: '校園綠化美化、無障礙設施改善及休憩空間建置。',
+                            goal: 600000,
+                            raised: 520000,
+                            donors: 112,
+                            deadline: '2025-04-30',
+                            daysLeft: 127,
+                            isUrgent: false,
+                            gradientClass: 'from-green-400 to-emerald-500'
+                        },
+                        {
+                            id: 6,
+                            name: '弱勢學生助學金',
+                            icon: '💝',
+                            description: '協助經濟弱勢學生安心就學，提供生活及學習補助。',
+                            goal: 500000,
+                            raised: 480000,
+                            donors: 198,
+                            deadline: '2025-03-31',
+                            daysLeft: 96,
+                            isUrgent: true,
+                            gradientClass: 'from-rose-400 to-red-500'
+                        }
+                    ],
+                    recentDonations: [
+                        { id: 1, name: '王○明', amount: 5000, project: '體育選手培訓基金', time: '2分鐘前' },
+                        { id: 2, name: '匿名善心人士', amount: 10000, project: '弱勢學生助學金', time: '15分鐘前' },
+                        { id: 3, name: '李○華', amount: 1000, project: '學生獎學金', time: '32分鐘前' },
+                        { id: 4, name: '張○偉', amount: 3000, project: '教學設備更新', time: '1小時前' },
+                        { id: 5, name: '陳○君', amount: 2000, project: '校園環境改善', time: '2小時前' },
+                        { id: 6, name: '林○芳', amount: 50000, project: '體育選手培訓基金', time: '3小時前' },
+                        { id: 7, name: '黃○文', amount: 1500, project: '學術研究發展', time: '5小時前' }
+                    ]
+                }
+            },
+            computed: {
+                totalRaised() {
+                    return this.projects.reduce((sum, p) => sum + p.raised, 0)
+                },
+                totalDonors() {
+                    return this.projects.reduce((sum, p) => sum + p.donors, 0)
+                }
+            },
+            methods: {
+                formatNumber(num) {
+                    return num.toLocaleString()
+                }
+            },
+            mounted() {
+                // 計算各專案進度
+                this.projects.forEach(p => {
+                    p.progress = Math.round((p.raised / p.goal) * 100)
+                })
+
+                // 5秒後顯示捐款動態
+                setTimeout(() => {
+                    this.showDonationFeed = true
+                }, 5000)
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>芳名錄 - 臺北市立大學募款平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'utaipei': {
+                            'primary': '#1e3a5f',
+                            'secondary': '#2d5a87',
+                            'accent': '#e63946',
+                            'gold': '#d4a84b',
+                            'light': '#f8f9fa'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Noto Sans TC', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [v-cloak] { display: none; }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 50%, #3d7ab5 100%);
+        }
+
+        .honor-card {
+            transition: all 0.3s ease;
+        }
+
+        .honor-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+
+        .tier-platinum {
+            background: linear-gradient(135deg, #e5e4e2 0%, #c0c0c0 50%, #a8a8a8 100%);
+        }
+
+        .tier-gold {
+            background: linear-gradient(135deg, #ffd700 0%, #daa520 50%, #b8860b 100%);
+        }
+
+        .tier-silver {
+            background: linear-gradient(135deg, #c0c0c0 0%, #a8a8a8 50%, #808080 100%);
+        }
+
+        .tier-bronze {
+            background: linear-gradient(135deg, #cd7f32 0%, #b87333 50%, #8b4513 100%);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50 min-h-screen">
+    <div id="app" v-cloak>
+        <!-- Header -->
+        <header class="gradient-bg text-white shadow-lg">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between py-4">
+                    <a href="index.html" class="flex items-center space-x-3">
+                        <img src="https://www.utaipei.edu.tw/var/file/0/1000/img/1583/366369593.jpg"
+                             alt="臺北市立大學"
+                             class="h-10 object-contain bg-white rounded px-2">
+                        <div>
+                            <h1 class="text-lg font-bold">臺北市立大學</h1>
+                            <p class="text-xs text-blue-200">募款平台</p>
+                        </div>
+                    </a>
+                    <nav class="flex items-center space-x-4">
+                        <a href="index.html" class="text-blue-200 hover:text-white">首頁</a>
+                        <a href="index.html#projects" class="text-blue-200 hover:text-white">募款專案</a>
+                        <a href="donate.html" class="bg-utaipei-accent hover:bg-red-600 px-4 py-2 rounded-full font-medium transition">
+                            立即捐款
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="gradient-bg text-white py-12">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">💐 芳名錄</h2>
+                <p class="text-lg text-blue-200 max-w-2xl mx-auto">
+                    感謝每一位捐款人的慷慨支持，<br class="md:hidden">
+                    您的愛心讓北市大更加美好。
+                </p>
+            </div>
+        </section>
+
+        <main class="container mx-auto px-4 py-12">
+            <!-- 統計數據 -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+                <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="text-3xl font-bold text-utaipei-accent">{{ totalDonors }}</div>
+                    <div class="text-gray-500 text-sm">捐款人數</div>
+                </div>
+                <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="text-3xl font-bold text-utaipei-gold">${{ formatNumber(totalAmount) }}</div>
+                    <div class="text-gray-500 text-sm">累計金額</div>
+                </div>
+                <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="text-3xl font-bold text-utaipei-primary">{{ topDonors.length }}</div>
+                    <div class="text-gray-500 text-sm">榮譽捐款人</div>
+                </div>
+                <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                    <div class="text-3xl font-bold text-green-500">6</div>
+                    <div class="text-gray-500 text-sm">支持專案</div>
+                </div>
+            </div>
+
+            <!-- 篩選和排序 -->
+            <div class="bg-white rounded-xl shadow-md p-4 mb-8">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center space-x-4">
+                        <span class="text-gray-500">篩選：</span>
+                        <select v-model="filterProject" class="border rounded-lg px-3 py-2 focus:outline-none focus:border-utaipei-accent">
+                            <option value="">全部專案</option>
+                            <option v-for="project in projects" :key="project.id" :value="project.id">
+                                {{ project.name }}
+                            </option>
+                        </select>
+                        <select v-model="filterTier" class="border rounded-lg px-3 py-2 focus:outline-none focus:border-utaipei-accent">
+                            <option value="">全部等級</option>
+                            <option value="platinum">白金級</option>
+                            <option value="gold">金質級</option>
+                            <option value="silver">銀質級</option>
+                            <option value="bronze">銅質級</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-gray-500">排序：</span>
+                        <select v-model="sortBy" class="border rounded-lg px-3 py-2 focus:outline-none focus:border-utaipei-accent">
+                            <option value="amount">依金額</option>
+                            <option value="date">依日期</option>
+                            <option value="name">依姓名</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 榮譽捐款人（白金級）-->
+            <div v-if="platinumDonors.length > 0" class="mb-12">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 tier-platinum rounded-full flex items-center justify-center mr-3">
+                        <span class="text-white">💎</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">白金級捐款人</h2>
+                    <span class="ml-2 text-sm text-gray-500">（累計 $100,000 以上）</span>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div v-for="donor in platinumDonors" :key="donor.id"
+                         class="honor-card bg-white rounded-xl shadow-md overflow-hidden border-2 border-gray-200">
+                        <div class="tier-platinum h-2"></div>
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center">
+                                        <span class="text-white text-2xl font-bold">{{ donor.name.charAt(0) }}</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-lg">{{ donor.name }}</div>
+                                        <div class="text-sm text-gray-500">{{ donor.title || '熱心校友' }}</div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-xl font-bold text-utaipei-accent">${{ formatNumber(donor.totalAmount) }}</div>
+                                    <div class="text-xs text-gray-500">累計捐款</div>
+                                </div>
+                            </div>
+                            <div v-if="donor.message" class="bg-gray-50 rounded-lg p-3 text-sm text-gray-600 italic">
+                                "{{ donor.message }}"
+                            </div>
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                <span v-for="project in donor.projects" :key="project"
+                                      class="px-2 py-1 bg-utaipei-primary/10 text-utaipei-primary text-xs rounded-full">
+                                    {{ project }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 金質級捐款人 -->
+            <div v-if="goldDonors.length > 0" class="mb-12">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 tier-gold rounded-full flex items-center justify-center mr-3">
+                        <span class="text-white">🥇</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">金質級捐款人</h2>
+                    <span class="ml-2 text-sm text-gray-500">（累計 $50,000 - $99,999）</span>
+                </div>
+                <div class="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div v-for="donor in goldDonors" :key="donor.id"
+                         class="honor-card bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="tier-gold h-1.5"></div>
+                        <div class="p-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold">{{ donor.name.charAt(0) }}</span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-bold">{{ donor.name }}</div>
+                                    <div class="text-sm text-utaipei-gold font-medium">${{ formatNumber(donor.totalAmount) }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 銀質級捐款人 -->
+            <div v-if="silverDonors.length > 0" class="mb-12">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 tier-silver rounded-full flex items-center justify-center mr-3">
+                        <span class="text-white">🥈</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">銀質級捐款人</h2>
+                    <span class="ml-2 text-sm text-gray-500">（累計 $10,000 - $49,999）</span>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                    <div v-for="donor in silverDonors" :key="donor.id"
+                         class="honor-card bg-white rounded-lg shadow p-3 text-center">
+                        <div class="w-10 h-10 mx-auto bg-gradient-to-br from-gray-300 to-gray-500 rounded-full flex items-center justify-center mb-2">
+                            <span class="text-white font-bold text-sm">{{ donor.name.charAt(0) }}</span>
+                        </div>
+                        <div class="font-medium text-sm truncate">{{ donor.name }}</div>
+                        <div class="text-xs text-gray-500">${{ formatNumber(donor.totalAmount) }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 銅質級捐款人 -->
+            <div v-if="bronzeDonors.length > 0" class="mb-12">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 tier-bronze rounded-full flex items-center justify-center mr-3">
+                        <span class="text-white">🥉</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">銅質級捐款人</h2>
+                    <span class="ml-2 text-sm text-gray-500">（累計 $1,000 - $9,999）</span>
+                </div>
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex flex-wrap gap-2">
+                        <span v-for="donor in bronzeDonors" :key="donor.id"
+                              class="px-3 py-1.5 bg-amber-50 text-amber-800 rounded-full text-sm hover:bg-amber-100 transition cursor-default">
+                            {{ donor.name }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 一般捐款人 -->
+            <div class="mb-12">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 bg-utaipei-primary rounded-full flex items-center justify-center mr-3">
+                        <span class="text-white">💝</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">所有捐款人</h2>
+                    <span class="ml-2 text-sm text-gray-500">（$100 以上）</span>
+                </div>
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex flex-wrap gap-2">
+                        <span v-for="donor in regularDonors" :key="donor.id"
+                              class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition cursor-default">
+                            {{ donor.name }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 最近捐款 -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="bg-utaipei-primary text-white px-6 py-4">
+                    <h3 class="text-xl font-bold">📋 最近捐款紀錄</h3>
+                </div>
+                <div class="divide-y">
+                    <div v-for="record in recentDonations" :key="record.id"
+                         class="px-6 py-4 hover:bg-gray-50 transition flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-10 h-10 bg-utaipei-gold/20 rounded-full flex items-center justify-center">
+                                <span class="text-utaipei-gold font-bold">{{ record.name.charAt(0) }}</span>
+                            </div>
+                            <div>
+                                <div class="font-medium">{{ record.name }}</div>
+                                <div class="text-sm text-gray-500">{{ record.project }}</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-bold text-utaipei-accent">${{ formatNumber(record.amount) }}</div>
+                            <div class="text-xs text-gray-400">{{ record.date }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 text-center">
+                    <button class="text-utaipei-primary hover:text-utaipei-secondary font-medium">
+                        載入更多 ↓
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- CTA Section -->
+        <section class="bg-utaipei-primary text-white py-16">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-3xl font-bold mb-4">加入愛心行列</h2>
+                <p class="text-blue-200 mb-8 max-w-xl mx-auto">
+                    您的每一份捐款，都將化為北市大學子前進的動力。<br>
+                    立即捐款，讓您的名字留在芳名錄上！
+                </p>
+                <a href="donate.html" class="inline-block bg-utaipei-accent hover:bg-red-600 text-white px-8 py-4 rounded-full font-bold text-lg transition transform hover:scale-105">
+                    立即捐款
+                </a>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white py-8">
+            <div class="container mx-auto px-4 text-center">
+                <p class="text-gray-400">&copy; 2025 臺北市立大學. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const { createApp } = Vue
+
+        createApp({
+            data() {
+                return {
+                    filterProject: '',
+                    filterTier: '',
+                    sortBy: 'amount',
+                    projects: [
+                        { id: 1, name: '體育選手培訓基金' },
+                        { id: 2, name: '學生獎學金' },
+                        { id: 3, name: '教學設備更新' },
+                        { id: 4, name: '學術研究發展' },
+                        { id: 5, name: '校園環境改善' },
+                        { id: 6, name: '弱勢學生助學金' }
+                    ],
+                    donors: [
+                        { id: 1, name: '王○明', totalAmount: 150000, tier: 'platinum', title: '傑出校友', message: '母校培育之恩，永銘於心。', projects: ['體育選手培訓基金', '學生獎學金'] },
+                        { id: 2, name: '李○華', totalAmount: 120000, tier: 'platinum', title: '企業家', message: '教育是最好的投資。', projects: ['教學設備更新', '學術研究發展'] },
+                        { id: 3, name: '張○偉', totalAmount: 100000, tier: 'platinum', title: '熱心校友', projects: ['弱勢學生助學金'] },
+                        { id: 4, name: '陳○君', totalAmount: 80000, tier: 'gold', projects: ['體育選手培訓基金'] },
+                        { id: 5, name: '林○芳', totalAmount: 75000, tier: 'gold', projects: ['學生獎學金'] },
+                        { id: 6, name: '黃○文', totalAmount: 60000, tier: 'gold', projects: ['校園環境改善'] },
+                        { id: 7, name: '吳○雄', totalAmount: 55000, tier: 'gold', projects: ['教學設備更新'] },
+                        { id: 8, name: '劉○美', totalAmount: 50000, tier: 'gold', projects: ['學術研究發展'] },
+                        { id: 9, name: '蔡○輝', totalAmount: 45000, tier: 'silver', projects: ['體育選手培訓基金'] },
+                        { id: 10, name: '許○玲', totalAmount: 35000, tier: 'silver', projects: ['弱勢學生助學金'] },
+                        { id: 11, name: '郭○志', totalAmount: 30000, tier: 'silver', projects: ['學生獎學金'] },
+                        { id: 12, name: '楊○珍', totalAmount: 25000, tier: 'silver', projects: ['校園環境改善'] },
+                        { id: 13, name: '周○強', totalAmount: 20000, tier: 'silver', projects: ['教學設備更新'] },
+                        { id: 14, name: '趙○怡', totalAmount: 15000, tier: 'silver', projects: ['學術研究發展'] },
+                        { id: 15, name: '謝○豪', totalAmount: 12000, tier: 'silver', projects: ['體育選手培訓基金'] },
+                        { id: 16, name: '洪○婷', totalAmount: 10000, tier: 'silver', projects: ['弱勢學生助學金'] },
+                        { id: 17, name: '鄭○宏', totalAmount: 8000, tier: 'bronze', projects: ['學生獎學金'] },
+                        { id: 18, name: '馬○琳', totalAmount: 7000, tier: 'bronze', projects: ['校園環境改善'] },
+                        { id: 19, name: '朱○傑', totalAmount: 6000, tier: 'bronze', projects: ['教學設備更新'] },
+                        { id: 20, name: '徐○萍', totalAmount: 5000, tier: 'bronze', projects: ['學術研究發展'] },
+                        { id: 21, name: '彭○達', totalAmount: 5000, tier: 'bronze', projects: ['體育選手培訓基金'] },
+                        { id: 22, name: '呂○慧', totalAmount: 4000, tier: 'bronze', projects: ['弱勢學生助學金'] },
+                        { id: 23, name: '施○民', totalAmount: 3500, tier: 'bronze', projects: ['學生獎學金'] },
+                        { id: 24, name: '曾○芬', totalAmount: 3000, tier: 'bronze', projects: ['校園環境改善'] },
+                        { id: 25, name: '賴○翔', totalAmount: 2500, tier: 'bronze', projects: ['教學設備更新'] },
+                        { id: 26, name: '潘○如', totalAmount: 2000, tier: 'bronze', projects: ['學術研究發展'] },
+                        { id: 27, name: '范○國', totalAmount: 1500, tier: 'bronze', projects: ['體育選手培訓基金'] },
+                        { id: 28, name: '葉○欣', totalAmount: 1000, tier: 'bronze', projects: ['弱勢學生助學金'] },
+                        { id: 29, name: '匿名善心人士', totalAmount: 800, tier: 'regular', projects: ['學生獎學金'] },
+                        { id: 30, name: '邱○哲', totalAmount: 500, tier: 'regular', projects: ['校園環境改善'] },
+                        { id: 31, name: '戴○瑩', totalAmount: 500, tier: 'regular', projects: ['教學設備更新'] },
+                        { id: 32, name: '蘇○銘', totalAmount: 300, tier: 'regular', projects: ['學術研究發展'] },
+                        { id: 33, name: '江○霖', totalAmount: 200, tier: 'regular', projects: ['體育選手培訓基金'] },
+                        { id: 34, name: '何○安', totalAmount: 100, tier: 'regular', projects: ['弱勢學生助學金'] }
+                    ],
+                    recentDonations: [
+                        { id: 1, name: '王○明', amount: 5000, project: '體育選手培訓基金', date: '2024-12-24' },
+                        { id: 2, name: '匿名善心人士', amount: 10000, project: '弱勢學生助學金', date: '2024-12-24' },
+                        { id: 3, name: '李○華', amount: 1000, project: '學生獎學金', date: '2024-12-23' },
+                        { id: 4, name: '張○偉', amount: 3000, project: '教學設備更新', date: '2024-12-23' },
+                        { id: 5, name: '陳○君', amount: 2000, project: '校園環境改善', date: '2024-12-22' },
+                        { id: 6, name: '林○芳', amount: 50000, project: '體育選手培訓基金', date: '2024-12-22' },
+                        { id: 7, name: '黃○文', amount: 1500, project: '學術研究發展', date: '2024-12-21' },
+                        { id: 8, name: '吳○雄', amount: 800, project: '弱勢學生助學金', date: '2024-12-21' }
+                    ]
+                }
+            },
+            computed: {
+                totalDonors() {
+                    return this.donors.length
+                },
+                totalAmount() {
+                    return this.donors.reduce((sum, d) => sum + d.totalAmount, 0)
+                },
+                topDonors() {
+                    return this.donors.filter(d => d.tier === 'platinum' || d.tier === 'gold')
+                },
+                filteredDonors() {
+                    let result = [...this.donors]
+
+                    if (this.filterProject) {
+                        const projectName = this.projects.find(p => p.id == this.filterProject)?.name
+                        result = result.filter(d => d.projects.includes(projectName))
+                    }
+
+                    if (this.filterTier) {
+                        result = result.filter(d => d.tier === this.filterTier)
+                    }
+
+                    if (this.sortBy === 'amount') {
+                        result.sort((a, b) => b.totalAmount - a.totalAmount)
+                    } else if (this.sortBy === 'name') {
+                        result.sort((a, b) => a.name.localeCompare(b.name, 'zh-TW'))
+                    }
+
+                    return result
+                },
+                platinumDonors() {
+                    return this.filteredDonors.filter(d => d.tier === 'platinum')
+                },
+                goldDonors() {
+                    return this.filteredDonors.filter(d => d.tier === 'gold')
+                },
+                silverDonors() {
+                    return this.filteredDonors.filter(d => d.tier === 'silver')
+                },
+                bronzeDonors() {
+                    return this.filteredDonors.filter(d => d.tier === 'bronze')
+                },
+                regularDonors() {
+                    return this.filteredDonors.filter(d => d.tier === 'regular')
+                }
+            },
+            methods: {
+                formatNumber(num) {
+                    return num.toLocaleString()
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
