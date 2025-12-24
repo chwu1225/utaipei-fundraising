@@ -30,6 +30,55 @@
     <style>
         [v-cloak] { display: none; }
 
+        /* DEMO Banner */
+        .demo-ribbon {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            overflow: hidden;
+            width: 150px;
+            height: 150px;
+            pointer-events: none;
+        }
+        .demo-ribbon span {
+            position: absolute;
+            display: block;
+            width: 225px;
+            padding: 10px 0;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            text-align: center;
+            left: -55px;
+            top: 35px;
+            transform: rotate(-45deg);
+            letter-spacing: 1px;
+        }
+        .demo-ribbon span::before,
+        .demo-ribbon span::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            z-index: -1;
+            border: 5px solid #c0392b;
+            border-bottom-color: transparent;
+            border-left-color: transparent;
+        }
+        .demo-ribbon span::before {
+            left: 0;
+        }
+        .demo-ribbon span::after {
+            right: 0;
+            border-left-color: #c0392b;
+            border-bottom-color: transparent;
+            border-right-color: transparent;
+        }
+
         .progress-ring {
             transform: rotate(-90deg);
         }
@@ -75,6 +124,11 @@
     </style>
 </head>
 <body class="font-sans bg-gray-50">
+    <!-- DEMO 標示 -->
+    <div class="demo-ribbon">
+        <span>🚧 DEMO 測試版</span>
+    </div>
+
     <div id="app" v-cloak>
         <!-- Header -->
         <header class="gradient-bg text-white shadow-lg sticky top-0 z-50">

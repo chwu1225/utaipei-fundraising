@@ -30,6 +30,36 @@
     <style>
         [v-cloak] { display: none; }
 
+        /* DEMO Banner */
+        .demo-ribbon {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            overflow: hidden;
+            width: 150px;
+            height: 150px;
+            pointer-events: none;
+        }
+        .demo-ribbon span {
+            position: absolute;
+            display: block;
+            width: 225px;
+            padding: 10px 0;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            text-align: center;
+            left: -55px;
+            top: 35px;
+            transform: rotate(-45deg);
+            letter-spacing: 1px;
+        }
+
         .gradient-bg {
             background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 50%, #3d7ab5 100%);
         }
@@ -66,6 +96,11 @@
     </style>
 </head>
 <body class="font-sans bg-gray-50 min-h-screen">
+    <!-- DEMO 標示 -->
+    <div class="demo-ribbon">
+        <span>🚧 DEMO 測試版</span>
+    </div>
+
     <div id="app" v-cloak>
         <!-- Header -->
         <header class="gradient-bg text-white shadow-lg">
