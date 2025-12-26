@@ -137,6 +137,13 @@
                         </svg>
                     </button>
                 </div>
+                <!-- Mobile Menu -->
+                <div v-if="mobileMenuOpen" class="md:hidden pb-4">
+                    <a href="#projects" class="block py-2 hover:text-utaipei-gold">募款專案</a>
+                    <a href="honor.html" class="block py-2 hover:text-utaipei-gold">芳名錄</a>
+                    <a href="about.html" class="block py-2 hover:text-utaipei-gold">關於我們</a>
+                    <a href="donate.html" class="block py-2 mt-2 bg-utaipei-accent text-center rounded-full">立即捐款</a>
+                </div>
             </div>
         </header>
 
@@ -212,7 +219,7 @@
                     </p>
                 </div>
 
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div v-for="project in projects" :key="project.id"
                          class="bg-white rounded-xl shadow-md overflow-hidden card-hover">
                         <!-- 專案圖片 -->
@@ -334,9 +341,9 @@
         </section>
 
         <!-- 即時捐款動態側邊欄 -->
-        <div class="fixed right-4 bottom-4 z-40">
+        <div class="fixed right-2 sm:right-4 bottom-2 sm:bottom-4 z-40 left-2 sm:left-auto">
             <div v-if="showDonationFeed"
-                 class="bg-white rounded-xl shadow-2xl w-80 max-h-96 overflow-hidden">
+                 class="bg-white rounded-xl shadow-2xl w-full sm:w-80 max-h-80 sm:max-h-96 overflow-hidden">
                 <div class="bg-utaipei-primary text-white px-4 py-3 flex justify-between items-center">
                     <span class="font-medium">💝 即時捐款動態</span>
                     <button @click="showDonationFeed = false" class="hover:text-utaipei-gold">
@@ -372,7 +379,7 @@
         <!-- Footer -->
         <footer class="bg-utaipei-primary text-white py-12">
             <div class="container mx-auto px-4">
-                <div class="grid md:grid-cols-4 gap-8">
+                <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-8">
                     <div>
                         <div class="flex items-center space-x-3 mb-4">
                             <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">

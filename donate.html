@@ -114,12 +114,24 @@
                             <p class="text-xs text-blue-200">募款平台</p>
                         </div>
                     </a>
-                    <nav class="flex items-center space-x-4">
+                    <nav class="hidden md:flex items-center space-x-4">
                         <a href="index.html" class="text-blue-200 hover:text-white">首頁</a>
                         <a href="index.html#projects" class="text-blue-200 hover:text-white">募款專案</a>
                         <a href="honor.html" class="text-blue-200 hover:text-white">芳名錄</a>
                         <a href="about.html" class="text-blue-200 hover:text-white">關於我們</a>
                     </nav>
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+                <!-- Mobile Menu -->
+                <div v-if="mobileMenuOpen" class="md:hidden pb-4">
+                    <a href="index.html" class="block py-2 hover:text-utaipei-gold">首頁</a>
+                    <a href="index.html#projects" class="block py-2 hover:text-utaipei-gold">募款專案</a>
+                    <a href="honor.html" class="block py-2 hover:text-utaipei-gold">芳名錄</a>
+                    <a href="about.html" class="block py-2 hover:text-utaipei-gold">關於我們</a>
                 </div>
             </div>
         </header>
@@ -136,7 +148,7 @@
                                 <span v-if="step > index">✓</span>
                                 <span v-else>{{ index + 1 }}</span>
                             </div>
-                            <span class="ml-2 text-sm font-medium"
+                            <span class="ml-2 text-sm font-medium hidden sm:inline"
                                   :class="step >= index + 1 ? 'text-utaipei-primary' : 'text-gray-400'">
                                 {{ stepName }}
                             </span>
@@ -198,7 +210,7 @@
                                                @focus="amount = null"
                                                placeholder="輸入金額"
                                                min="100"
-                                               class="w-full pl-16 pr-4 py-4 border-2 rounded-lg text-lg font-bold focus:border-utaipei-accent focus:ring-0 outline-none transition">
+                                               class="w-full pl-12 sm:pl-16 pr-4 py-4 border-2 rounded-lg text-lg font-bold focus:border-utaipei-accent focus:ring-0 outline-none transition">
                                     </div>
                                     <p class="text-xs text-gray-500 mt-1">最低捐款金額 NT$100</p>
                                 </div>
@@ -417,7 +429,7 @@
 
                     <!-- 右側：專案資訊 -->
                     <div class="md:col-span-1">
-                        <div class="bg-white rounded-xl shadow-lg overflow-hidden sticky top-24">
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden md:sticky md:top-24">
                             <div class="h-32 bg-gradient-to-br flex items-center justify-center"
                                  :class="selectedProject.gradientClass">
                                 <span class="text-5xl">{{ selectedProject.icon }}</span>
@@ -523,6 +535,7 @@
         createApp({
             data() {
                 return {
+                    mobileMenuOpen: false,
                     step: 1,
                     donationType: 'once',
                     amount: null,
