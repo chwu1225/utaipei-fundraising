@@ -194,7 +194,7 @@ const schoolInfo = {
     students: 8000,
     olympicMedals: 32,
     campuses: 3,
-    logo: 'https://www-ws.gov.taipei/001/Upload/439/relpic/12900/8896921/0ba2af08-e1ab-4c10-8da7-2fb4fc94889a@710x470.jpg',
+    logo: 'images/logo.jpg',
     contact: {
         phone: '(02) 2311-3040',
         email: 'donation@utaipei.edu.tw',
