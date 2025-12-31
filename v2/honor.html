@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>芳名錄 | 臺北市立大學募款平台</title>
+    <meta name="description" content="感謝所有捐款者的愛心支持，您的善舉將永遠銘記。">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark': '#0a1628',
+                        'primary': '#1e3a5f',
+                        'secondary': '#162d4a',
+                        'card': '#1a3352',
+                        'gold': '#d4a84b',
+                        'gold-light': '#e8c87a',
+                    },
+                    fontFamily: {
+                        'sans': ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="bg-dark text-white font-sans">
+    <div id="app">
+        <!-- Header -->
+        <header class="header-glass fixed top-0 left-0 right-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 md:h-20">
+                    <!-- Logo -->
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img :src="schoolInfo.logo" alt="校徽" class="h-10 w-10 rounded-full object-cover">
+                        <div class="hidden sm:block">
+                            <div class="text-lg font-bold text-white">{{ schoolInfo.name }}</div>
+                            <div class="text-xs text-gray-400">募款平台</div>
+                        </div>
+                    </a>
+
+                    <!-- Desktop Navigation -->
+                    <nav class="hidden md:flex items-center gap-8">
+                        <a href="index.html" class="nav-link">首頁</a>
+                        <a href="projects.html" class="nav-link">所有專案</a>
+                        <a href="about.html" class="nav-link">關於我們</a>
+                        <a href="honor.html" class="nav-link text-white">芳名錄</a>
+                    </nav>
+
+                    <!-- CTA Button -->
+                    <div class="flex items-center gap-4">
+                        <a href="donate.html" class="btn-gold text-sm md:text-base">
+                            立即捐款
+                        </a>
+                        <!-- Mobile Menu Button -->
+                        <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path v-if="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                                <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu -->
+                <div v-show="mobileMenuOpen" class="md:hidden pb-4">
+                    <nav class="flex flex-col gap-2">
+                        <a href="index.html" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300">首頁</a>
+                        <a href="projects.html" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300">所有專案</a>
+                        <a href="about.html" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300">關於我們</a>
+                        <a href="honor.html" class="px-4 py-3 rounded-lg bg-white/5 text-white">芳名錄</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="starry-bg pt-28 pb-16">
+            <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">感謝芳名錄</h1>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    感謝每一位捐款者的愛心支持，您的善舉將永遠銘記於心。
+                </p>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="bg-primary/30 py-8">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="glass-card p-4 text-center">
+                        <div class="text-2xl font-bold text-gold">{{ formatNumber(totalAmount) }}</div>
+                        <div class="text-sm text-gray-400">累計捐款（元）</div>
+                    </div>
+                    <div class="glass-card p-4 text-center">
+                        <div class="text-2xl font-bold text-gold">{{ totalDonors }}</div>
+                        <div class="text-sm text-gray-400">捐款人次</div>
+                    </div>
+                    <div class="glass-card p-4 text-center">
+                        <div class="text-2xl font-bold text-gold">{{ platinumDonors.length }}</div>
+                        <div class="text-sm text-gray-400">白金級贊助</div>
+                    </div>
+                    <div class="glass-card p-4 text-center">
+                        <div class="text-2xl font-bold text-gold">{{ goldDonors.length }}</div>
+                        <div class="text-sm text-gray-400">金質級贊助</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filter Section -->
+        <section class="bg-dark py-6 sticky top-16 md:top-20 z-40 border-b border-white/10">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <!-- Tier Filter -->
+                    <div class="flex flex-wrap gap-2">
+                        <button
+                            @click="filterTier = 'all'"
+                            :class="['filter-tag text-sm', { 'active': filterTier === 'all' }]"
+                        >
+                            全部
+                        </button>
+                        <button
+                            @click="filterTier = 'platinum'"
+                            :class="['filter-tag text-sm', { 'active': filterTier === 'platinum' }]"
+                        >
+                            👑 白金級
+                        </button>
+                        <button
+                            @click="filterTier = 'gold'"
+                            :class="['filter-tag text-sm', { 'active': filterTier === 'gold' }]"
+                        >
+                            🏆 金質級
+                        </button>
+                        <button
+                            @click="filterTier = 'silver'"
+                            :class="['filter-tag text-sm', { 'active': filterTier === 'silver' }]"
+                        >
+                            🥈 銀質級
+                        </button>
+                        <button
+                            @click="filterTier = 'bronze'"
+                            :class="['filter-tag text-sm', { 'active': filterTier === 'bronze' }]"
+                        >
+                            🥉 銅質級
+                        </button>
+                    </div>
+
+                    <!-- Sort -->
+                    <div class="flex items-center gap-3">
+                        <span class="text-gray-400 text-sm">排序：</span>
+                        <select v-model="sortBy" class="form-input py-2 px-4 text-sm w-32">
+                            <option value="amount">捐款金額</option>
+                            <option value="name">姓名</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Donors List -->
+        <section class="bg-dark py-12">
+            <div class="max-w-7xl mx-auto px-4">
+
+                <!-- Platinum Donors -->
+                <div v-if="filteredPlatinum.length > 0" class="mb-12">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <span class="text-2xl">👑</span>
+                        白金級贊助（NT$ 100,000 以上）
+                    </h2>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div
+                            v-for="donor in filteredPlatinum"
+                            :key="donor.id"
+                            class="glass-card p-6 border-l-4 border-gold hover:border-gold/80 transition-all"
+                        >
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <h3 class="font-bold text-lg text-gold">{{ donor.name }}</h3>
+                                    <span v-if="donor.title" class="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">{{ donor.title }}</span>
+                                </div>
+                                <span class="text-2xl">👑</span>
+                            </div>
+                            <div class="text-2xl font-bold text-white mb-3">
+                                NT$ {{ formatNumber(donor.amount) }}
+                            </div>
+                            <p v-if="donor.message" class="text-gray-400 text-sm italic mb-3">
+                                「{{ donor.message }}」
+                            </p>
+                            <div class="text-xs text-gray-500">
+                                支持專案：{{ donor.projects.join('、') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gold Donors -->
+                <div v-if="filteredGold.length > 0" class="mb-12">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <span class="text-2xl">🏆</span>
+                        金質級贊助（NT$ 50,000 - 99,999）
+                    </h2>
+                    <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div
+                            v-for="donor in filteredGold"
+                            :key="donor.id"
+                            class="donor-card"
+                        >
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-bold">{{ donor.name }}</h3>
+                                <span>🏆</span>
+                            </div>
+                            <div class="text-gold font-bold mt-2">
+                                NT$ {{ formatNumber(donor.amount) }}
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">
+                                {{ donor.projects[0] }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Silver Donors -->
+                <div v-if="filteredSilver.length > 0" class="mb-12">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <span class="text-2xl">🥈</span>
+                        銀質級贊助（NT$ 10,000 - 49,999）
+                    </h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                        <div
+                            v-for="donor in filteredSilver"
+                            :key="donor.id"
+                            class="bg-card/50 rounded-lg p-3 text-center hover:bg-card transition-colors"
+                        >
+                            <div class="font-semibold text-sm">{{ donor.name }}</div>
+                            <div class="text-gold text-xs mt-1">{{ formatCompact(donor.amount) }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bronze Donors -->
+                <div v-if="filteredBronze.length > 0" class="mb-12">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <span class="text-2xl">🥉</span>
+                        銅質級贊助（NT$ 1,000 - 9,999）
+                    </h2>
+                    <div class="flex flex-wrap gap-2">
+                        <span
+                            v-for="donor in filteredBronze"
+                            :key="donor.id"
+                            class="px-3 py-1.5 bg-card/50 rounded-full text-sm text-gray-300 hover:bg-card transition-colors"
+                        >
+                            {{ donor.name }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div v-if="filteredDonors.length === 0" class="text-center py-20">
+                    <div class="text-6xl mb-4">🔍</div>
+                    <h3 class="text-xl font-bold mb-2">沒有找到相關捐款人</h3>
+                    <p class="text-gray-400">請嘗試其他篩選條件</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Recent Donations -->
+        <section class="bg-secondary/30 py-12">
+            <div class="max-w-7xl mx-auto px-4">
+                <h2 class="text-xl font-bold mb-6">最近捐款紀錄</h2>
+
+                <div class="glass-card overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-card">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-400">捐款人</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-400 hidden sm:table-cell">專案</th>
+                                <th class="px-4 py-3 text-right text-sm font-semibold text-gray-400">金額</th>
+                                <th class="px-4 py-3 text-right text-sm font-semibold text-gray-400 hidden md:table-cell">時間</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            <tr
+                                v-for="donation in recentDonations"
+                                :key="donation.id"
+                                class="hover:bg-white/5 transition-colors"
+                            >
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-lg">💝</span>
+                                        <span>{{ donation.name }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-gray-400 text-sm hidden sm:table-cell">{{ donation.project }}</td>
+                                <td class="px-4 py-3 text-right">
+                                    <span class="text-gold font-bold">NT$ {{ formatNumber(donation.amount) }}</span>
+                                </td>
+                                <td class="px-4 py-3 text-right text-gray-500 text-sm hidden md:table-cell">{{ donation.time }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="bg-gradient-to-b from-dark to-primary py-20">
+            <div class="max-w-3xl mx-auto px-4 text-center">
+                <h2 class="text-3xl font-bold mb-4">加入我們的愛心行列</h2>
+                <p class="text-gray-400 mb-8">
+                    您的名字也能出現在芳名錄上，與眾多善心人士一同見證教育的力量。
+                </p>
+                <a href="donate.html" class="btn-gold text-lg px-10 py-4 inline-block">
+                    立即捐款
+                </a>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="grid md:grid-cols-4 gap-8 mb-8">
+                    <!-- About -->
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <img :src="schoolInfo.logo" alt="校徽" class="h-12 w-12 rounded-full object-cover">
+                            <div>
+                                <div class="font-bold">{{ schoolInfo.name }}</div>
+                                <div class="text-sm text-gray-500">募款平台</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm">{{ schoolInfo.slogan }}</p>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h4 class="font-bold mb-4 text-gold">快速連結</h4>
+                        <nav class="flex flex-col gap-2">
+                            <a href="projects.html" class="footer-link text-sm">所有專案</a>
+                            <a href="donate.html" class="footer-link text-sm">立即捐款</a>
+                            <a href="honor.html" class="footer-link text-sm">芳名錄</a>
+                            <a href="about.html" class="footer-link text-sm">關於我們</a>
+                        </nav>
+                    </div>
+
+                    <!-- Contact -->
+                    <div>
+                        <h4 class="font-bold mb-4 text-gold">聯絡資訊</h4>
+                        <div class="space-y-2 text-sm text-gray-400">
+                            <p>📞 {{ schoolInfo.contact.phone }}</p>
+                            <p>✉️ {{ schoolInfo.contact.email }}</p>
+                            <p>📍 {{ schoolInfo.contact.address }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Certifications -->
+                    <div>
+                        <h4 class="font-bold mb-4 text-gold">安全認證</h4>
+                        <div class="flex gap-3">
+                            <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-2xl">🔒</div>
+                            <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-2xl">✅</div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-3">SSL 加密傳輸・政府立案</p>
+                    </div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="border-t border-white/10 pt-6 text-center text-sm text-gray-500">
+                    <p>&copy; {{ new Date().getFullYear() }} {{ schoolInfo.name }}. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Shared Data -->
+    <script src="js/app.js"></script>
+
+    <!-- Page Script -->
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    mobileMenuOpen: false,
+                    filterTier: 'all',
+                    sortBy: 'amount',
+                    donors: window.donorsData || [],
+                    recentDonations: window.recentDonationsData || [],
+                    schoolInfo: window.schoolInfo || {}
+                }
+            },
+            computed: {
+                totalAmount() {
+                    return this.donors.reduce((sum, d) => sum + d.amount, 0);
+                },
+                totalDonors() {
+                    return this.donors.length;
+                },
+                platinumDonors() {
+                    return this.donors.filter(d => d.tier === 'platinum');
+                },
+                goldDonors() {
+                    return this.donors.filter(d => d.tier === 'gold');
+                },
+                silverDonors() {
+                    return this.donors.filter(d => d.tier === 'silver');
+                },
+                bronzeDonors() {
+                    return this.donors.filter(d => d.tier === 'bronze');
+                },
+                filteredDonors() {
+                    let result = this.donors;
+                    if (this.filterTier !== 'all') {
+                        result = result.filter(d => d.tier === this.filterTier);
+                    }
+                    return this.sortDonors(result);
+                },
+                filteredPlatinum() {
+                    if (this.filterTier !== 'all' && this.filterTier !== 'platinum') return [];
+                    return this.sortDonors(this.platinumDonors);
+                },
+                filteredGold() {
+                    if (this.filterTier !== 'all' && this.filterTier !== 'gold') return [];
+                    return this.sortDonors(this.goldDonors);
+                },
+                filteredSilver() {
+                    if (this.filterTier !== 'all' && this.filterTier !== 'silver') return [];
+                    return this.sortDonors(this.silverDonors);
+                },
+                filteredBronze() {
+                    if (this.filterTier !== 'all' && this.filterTier !== 'bronze') return [];
+                    return this.sortDonors(this.bronzeDonors);
+                }
+            },
+            methods: {
+                formatNumber(num) {
+                    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                },
+                formatCompact(num) {
+                    if (num >= 10000) {
+                        return (num / 10000).toFixed(0) + '萬';
+                    }
+                    return this.formatNumber(num);
+                },
+                sortDonors(donors) {
+                    const sorted = [...donors];
+                    if (this.sortBy === 'amount') {
+                        return sorted.sort((a, b) => b.amount - a.amount);
+                    } else if (this.sortBy === 'name') {
+                        return sorted.sort((a, b) => a.name.localeCompare(b.name, 'zh-TW'));
+                    }
+                    return sorted;
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>關於我們 | 臺北市立大學募款平台</title>
+    <meta name="description" content="認識臺北市立大學，了解我們的教育理念與發展願景。">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark': '#0a1628',
+                        'primary': '#1e3a5f',
+                        'secondary': '#162d4a',
+                        'card': '#1a3352',
+                        'gold': '#d4a84b',
+                        'gold-light': '#e8c87a',
+                    },
+                    fontFamily: {
+                        'sans': ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="bg-dark text-white font-sans">
+    <div id="app">
+        <!-- Header -->
+        <header class="header-glass fixed top-0 left-0 right-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 md:h-20">
+                    <!-- Logo -->
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img :src="schoolInfo.logo" alt="校徽" class="h-10 w-10 rounded-full object-cover">
+                        <div class="hidden sm:block">
+                            <div class="text-lg font-bold text-white">{{ schoolInfo.name }}</div>
+                            <div class="text-xs text-gray-400">募款平台</div>
+                        </div>
+                    </a>
+
+                    <!-- Desktop Navigation -->
+                    <nav class="hidden md:flex items-center gap-8">
+                        <a href="index.html" class="nav-link">首頁</a>
+                        <a href="projects.html" class="nav-link">所有專案</a>
+                        <a href="about.html" class="nav-link text-white">關於我們</a>
+                        <a href="honor.html" class="nav-link">芳名錄</a>
+                    </nav>
+
+                    <!-- CTA Button -->
+                    <div class="flex items-center gap-4">
+                        <a href="donate.html" class="btn-gold text-sm md:text-base">
+                            立即捐款
+                        </a>
+                        <!-- Mobile Menu Button -->
+                        <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path v-if="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                                <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu -->
+                <div v-show="mobileMenuOpen" class="md:hidden pb-4">
+                    <nav class="flex flex-col gap-2">
+                        <a href="index.html" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300">首頁</a>
+                        <a href="projects.html" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300">所有專案</a>
+                        <a href="about.html" class="px-4 py-3 rounded-lg bg-white/5 text-white">關於我們</a>
+                        <a href="honor.html" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300">芳名錄</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="starry-bg pt-28 pb-20">
+            <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">關於臺北市立大學</h1>
+                <p class="text-gray-400 max-w-2xl mx-auto text-lg">
+                    百年樹人，育才興邦。攜手打造更美好的教育未來。
+                </p>
+            </div>
+        </section>
+
+        <!-- School Introduction -->
+        <section class="bg-dark py-16">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <!-- Image -->
+                    <div class="glass-card p-2 rounded-2xl">
+                        <img :src="schoolInfo.logo" alt="校園" class="w-full h-64 md:h-80 object-cover rounded-xl">
+                    </div>
+
+                    <!-- Content -->
+                    <div>
+                        <h2 class="text-3xl font-bold mb-6">認識北市大</h2>
+                        <p class="text-gray-400 mb-6 leading-relaxed">
+                            臺北市立大學創立於 1895 年，是臺灣歷史最悠久的高等教育學府之一。
+                            經過百餘年的發展，本校已成為培育師資、體育選手及各領域專業人才的搖籃。
+                        </p>
+                        <p class="text-gray-400 mb-8 leading-relaxed">
+                            學校以「卓越、創新、關懷」為核心價值，致力於提供優質教育環境，
+                            培養具備專業知能與人文素養的現代公民。
+                        </p>
+
+                        <!-- Stats -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-gold">{{ currentYear - schoolInfo.founded }}</div>
+                                <div class="text-sm text-gray-500">年歷史</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-gold">{{ formatNumber(schoolInfo.students) }}+</div>
+                                <div class="text-sm text-gray-500">在校學生</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-gold">{{ schoolInfo.olympicMedals }}</div>
+                                <div class="text-sm text-gray-500">奧運獎牌</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-gold">{{ schoolInfo.campuses }}</div>
+                                <div class="text-sm text-gray-500">校區</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vision Section -->
+        <section class="bg-gradient-to-b from-dark to-primary py-20">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">發展願景</h2>
+                    <p class="text-gray-400">三大支柱，引領未來</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Vision 1 -->
+                    <div class="glass-card p-8 text-center hover:border-gold transition-all group">
+                        <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">📚</div>
+                        <h3 class="text-xl font-bold mb-4">師資培育典範大學</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            深耕教育專業，培養具備創新教學能力的優秀師資，
+                            引領臺灣教育改革與發展。
+                        </p>
+                    </div>
+
+                    <!-- Vision 2 -->
+                    <div class="glass-card p-8 text-center hover:border-gold transition-all group">
+                        <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">🏅</div>
+                        <h3 class="text-xl font-bold mb-4">奪金選手重鎮大學</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            打造頂尖運動訓練環境，培育國際級運動選手，
+                            持續在國際賽場上為國爭光。
+                        </p>
+                    </div>
+
+                    <!-- Vision 3 -->
+                    <div class="glass-card p-8 text-center hover:border-gold transition-all group">
+                        <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">🌆</div>
+                        <h3 class="text-xl font-bold mb-4">都會特色創新大學</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            結合都會資源與學術研究，發展城市特色課程，
+                            培養具備都市治理專業的人才。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Donate Section -->
+        <section class="bg-dark py-20">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">為什麼捐款給北市大？</h2>
+                    <p class="text-gray-400">您的支持，將創造深遠影響</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="glass-card p-6 hover:border-gold transition-colors">
+                        <div class="text-3xl mb-4">💡</div>
+                        <h3 class="font-bold mb-2">支持學術研究</h3>
+                        <p class="text-gray-400 text-sm">資助前瞻研究計畫，推動知識創新與學術發展</p>
+                    </div>
+                    <div class="glass-card p-6 hover:border-gold transition-colors">
+                        <div class="text-3xl mb-4">🎓</div>
+                        <h3 class="font-bold mb-2">培育優秀人才</h3>
+                        <p class="text-gray-400 text-sm">提供獎學金幫助清寒學子完成學業追求夢想</p>
+                    </div>
+                    <div class="glass-card p-6 hover:border-gold transition-colors">
+                        <div class="text-3xl mb-4">🏆</div>
+                        <h3 class="font-bold mb-2">發展體育強項</h3>
+                        <p class="text-gray-400 text-sm">支持運動員培訓，助其在國際舞台發光發熱</p>
+                    </div>
+                    <div class="glass-card p-6 hover:border-gold transition-colors">
+                        <div class="text-3xl mb-4">🏫</div>
+                        <h3 class="font-bold mb-2">優化學習環境</h3>
+                        <p class="text-gray-400 text-sm">升級教學設備，打造現代化智慧校園</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Transparency Section -->
+        <section class="bg-secondary/30 py-16">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <h2 class="text-2xl font-bold mb-8">公開透明承諾</h2>
+                <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-full bg-gold/20 flex items-center justify-center text-2xl mb-3">📋</div>
+                        <span class="text-sm text-gray-400">經費使用公開</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-full bg-gold/20 flex items-center justify-center text-2xl mb-3">📊</div>
+                        <span class="text-sm text-gray-400">季度成果報告</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-full bg-gold/20 flex items-center justify-center text-2xl mb-3">✅</div>
+                        <span class="text-sm text-gray-400">專款專用保證</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-full bg-gold/20 flex items-center justify-center text-2xl mb-3">🔍</div>
+                        <span class="text-sm text-gray-400">捐款流向可查</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="bg-dark py-20">
+            <div class="max-w-3xl mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-4">常見問題</h2>
+                    <p class="text-gray-400">解答您的疑問</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div
+                        v-for="(faq, index) in faqs"
+                        :key="index"
+                        class="faq-item"
+                    >
+                        <div
+                            class="faq-question"
+                            @click="toggleFaq(index)"
+                        >
+                            <span class="font-semibold">{{ faq.question }}</span>
+                            <svg
+                                :class="['w-5 h-5 transition-transform text-gold', { 'rotate-180': activeFaq === index }]"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                        <div :class="['faq-answer', { 'open': activeFaq === index }]">
+                            <div class="faq-answer-content">
+                                {{ faq.answer }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="bg-gradient-to-b from-dark to-primary py-20">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <h2 class="text-3xl font-bold mb-4">聯絡我們</h2>
+                <p class="text-gray-400 mb-8">如有任何疑問，歡迎與我們聯繫</p>
+
+                <div class="glass-card p-8 inline-block">
+                    <div class="grid md:grid-cols-3 gap-8 text-left">
+                        <div>
+                            <h4 class="font-bold text-gold mb-3">校務基金管理委員會</h4>
+                            <p class="text-gray-400 text-sm">📞 {{ schoolInfo.contact.phone }}</p>
+                            <p class="text-gray-400 text-sm">✉️ {{ schoolInfo.contact.email }}</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gold mb-3">校址</h4>
+                            <p class="text-gray-400 text-sm">📍 {{ schoolInfo.contact.address }}</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gold mb-3">服務時間</h4>
+                            <p class="text-gray-400 text-sm">週一至週五</p>
+                            <p class="text-gray-400 text-sm">09:00 - 17:00</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-10">
+                    <a href="donate.html" class="btn-gold text-lg px-10 py-4 inline-block">
+                        立即捐款
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="grid md:grid-cols-4 gap-8 mb-8">
+                    <!-- About -->
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <img :src="schoolInfo.logo" alt="校徽" class="h-12 w-12 rounded-full object-cover">
+                            <div>
+                                <div class="font-bold">{{ schoolInfo.name }}</div>
+                                <div class="text-sm text-gray-500">募款平台</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm">{{ schoolInfo.slogan }}</p>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h4 class="font-bold mb-4 text-gold">快速連結</h4>
+                        <nav class="flex flex-col gap-2">
+                            <a href="projects.html" class="footer-link text-sm">所有專案</a>
+                            <a href="donate.html" class="footer-link text-sm">立即捐款</a>
+                            <a href="honor.html" class="footer-link text-sm">芳名錄</a>
+                            <a href="about.html" class="footer-link text-sm">關於我們</a>
+                        </nav>
+                    </div>
+
+                    <!-- Contact -->
+                    <div>
+                        <h4 class="font-bold mb-4 text-gold">聯絡資訊</h4>
+                        <div class="space-y-2 text-sm text-gray-400">
+                            <p>📞 {{ schoolInfo.contact.phone }}</p>
+                            <p>✉️ {{ schoolInfo.contact.email }}</p>
+                            <p>📍 {{ schoolInfo.contact.address }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Certifications -->
+                    <div>
+                        <h4 class="font-bold mb-4 text-gold">安全認證</h4>
+                        <div class="flex gap-3">
+                            <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-2xl">🔒</div>
+                            <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-2xl">✅</div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-3">SSL 加密傳輸・政府立案</p>
+                    </div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="border-t border-white/10 pt-6 text-center text-sm text-gray-500">
+                    <p>&copy; {{ currentYear }} {{ schoolInfo.name }}. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Shared Data -->
+    <script src="js/app.js"></script>
+
+    <!-- Page Script -->
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    mobileMenuOpen: false,
+                    activeFaq: null,
+                    schoolInfo: window.schoolInfo || {},
+                    faqs: window.faqData || [],
+                    currentYear: new Date().getFullYear()
+                }
+            },
+            methods: {
+                formatNumber(num) {
+                    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                },
+                toggleFaq(index) {
+                    this.activeFaq = this.activeFaq === index ? null : index;
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

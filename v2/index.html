@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>臺北市立大學募款平台 | 點亮未來，育才興邦</title>
+    <meta name="description" content="臺北市立大學募款平台，支持優質教育發展，培育未來人才。">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark': '#0a1628',
+                        'primary': '#1e3a5f',
+                        'secondary': '#162d4a',
+                        'card': '#1a3352',
+                        'gold': '#d4a84b',
+                        'gold-light': '#e8c87a',
+                    },
+                    fontFamily: {
+                        'sans': ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="bg-dark text-white font-sans">
+    <div id="app">
+        <!-- Header -->
+        <header class="header-glass fixed top-0 left-0 right-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 md:h-20">
+                    <!-- Logo -->
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img :src="schoolInfo.logo" alt="校徽" class="h-10 w-10 rounded-full object-cover">
+                        <div class="hidden sm:block">
+                            <div class="text-lg font-bold text-white">{{ schoolInfo.name }}</div>
+                            <div class="text-xs text-gray-400">募款平台</div>
+                        </div>
+                    </a>
+
+                    <!-- Desktop Navigation -->
+                    <nav class="hidden md:flex items-center gap-8">
+                        <a href="index.html" class="nav-link text-white">首頁</a>
+                        <a href="projects.html" class="nav-link">所有專案</a>
+                        <a href="about.html" class="nav-link">關於我們</a>
+                        <a href="honor.html" class="nav-link">芳名錄</a>
+                    </nav>
+
+                    <!-- CTA Button -->
+                    <div class="flex items-center gap-4">
+                        <a href="donate.html" class="btn-gold text-sm md:text-base">
+                            立即捐款
+                        </a>
+                        <!-- Mobile Menu Button -->
+                        <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path v-if="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                                <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu -->
+                <div v-show="mobileMenuOpen" class="md:hidden pb-4">
+                    <nav class="flex flex-col gap-2">
+                        <a href="index.html" class="px-4 py-3 rounded-lg bg-white/5 text-white">首頁</a>
+                        <a href="projects.html" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300">所有專案</a>
+                        <a href="about.html" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300">關於我們</a>
+                        <a href="honor.html" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300">芳名錄</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="starry-bg min-h-screen flex items-center justify-center pt-20">
+            <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+                <!-- Main Title -->
+                <h1 class="hero-title animate-fade-in-up">
+                    點亮未來，育才興邦
+                </h1>
+                <p class="hero-subtitle animate-fade-in-up delay-100">
+                    您的每一份捐款，都是照亮學子前程的星光。<br>
+                    攜手支持臺北市立大學，共同培育國家未來棟樑。
+                </p>
+
+                <!-- Stats -->
+                <div class="grid grid-cols-3 gap-4 md:gap-8 max-w-2xl mx-auto mb-10 animate-fade-in-up delay-200">
+                    <div class="glass-card p-4 md:p-6">
+                        <div class="text-2xl md:text-3xl font-bold text-gold">{{ formatNumber(totalRaised) }}</div>
+                        <div class="text-xs md:text-sm text-gray-400 mt-1">已募得（元）</div>
+                    </div>
+                    <div class="glass-card p-4 md:p-6">
+                        <div class="text-2xl md:text-3xl font-bold text-gold">{{ formatNumber(totalDonors) }}</div>
+                        <div class="text-xs md:text-sm text-gray-400 mt-1">捐款人次</div>
+                    </div>
+                    <div class="glass-card p-4 md:p-6">
+                        <div class="text-2xl md:text-3xl font-bold text-gold">{{ projects.length }}</div>
+                        <div class="text-xs md:text-sm text-gray-400 mt-1">進行中專案</div>
+                    </div>
+                </div>
+
+                <!-- CTA Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-300">
+                    <a href="donate.html" class="btn-gold text-lg px-10 py-4">
+                        立即捐款
+                    </a>
+                    <a href="projects.html" class="btn-outline text-lg px-10 py-4">
+                        瀏覽專案
+                    </a>
+                </div>
+
+                <!-- Scroll Indicator -->
+                <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+                    <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filter Section -->
+        <section class="bg-gradient py-8 sticky top-16 md:top-20 z-40">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex flex-wrap gap-3 justify-center">
+                    <button
+                        v-for="cat in categories"
+                        :key="cat.id"
+                        @click="activeFilter = cat.id"
+                        :class="['filter-tag', { 'active': activeFilter === cat.id }]"
+                    >
+                        <span class="mr-1">{{ cat.icon }}</span>
+                        {{ cat.name }}
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Grid -->
+        <section class="bg-dark py-16">
+            <div class="max-w-7xl mx-auto px-4">
+                <!-- Section Title -->
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">募款專案</h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">
+                        選擇您關心的領域，用愛心點亮希望
+                    </p>
+                </div>
+
+                <!-- Projects Grid -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div
+                        v-for="project in filteredProjects"
+                        :key="project.id"
+                        class="card-project group"
+                    >
+                        <!-- Card Header with Gradient -->
+                        <div :class="['h-32 bg-gradient-to-br flex items-center justify-center relative', project.gradient]">
+                            <span class="text-5xl">{{ project.icon }}</span>
+                            <!-- Urgent Badge -->
+                            <span v-if="project.isUrgent" class="absolute top-3 right-3 px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full animate-pulse">
+                                急需支援
+                            </span>
+                        </div>
+
+                        <!-- Card Content -->
+                        <div class="p-6">
+                            <!-- Project Name -->
+                            <h3 class="text-xl font-bold mb-2 group-hover:text-gold transition-colors">
+                                {{ project.name }}
+                            </h3>
+                            <!-- Description -->
+                            <p class="text-gray-400 text-sm mb-4">
+                                {{ project.description }}
+                            </p>
+
+                            <!-- Expandable Details (Show on Hover) -->
+                            <div class="card-details">
+                                <!-- Progress Bar -->
+                                <div class="mb-3">
+                                    <div class="flex justify-between text-sm mb-2">
+                                        <span class="text-gray-400">募款進度</span>
+                                        <span class="text-gold font-bold">{{ calcProgress(project.raised, project.goal) }}%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" :style="{ width: calcProgress(project.raised, project.goal) + '%' }"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Stats -->
+                                <div class="grid grid-cols-3 gap-2 text-center text-sm">
+                                    <div>
+                                        <div class="text-gold font-bold">{{ formatCompact(project.raised) }}</div>
+                                        <div class="text-gray-500 text-xs">已募得</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-white font-bold">{{ project.donors }}</div>
+                                        <div class="text-gray-500 text-xs">捐款人</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-white font-bold">{{ project.daysLeft }}</div>
+                                        <div class="text-gray-500 text-xs">剩餘天數</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CTA Button -->
+                            <a :href="'donate.html?project=' + project.id" class="block mt-4">
+                                <button class="w-full py-3 bg-white/5 hover:bg-gold hover:text-dark rounded-lg font-semibold transition-all border border-white/10 hover:border-gold">
+                                    立即捐款
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View All Button -->
+                <div class="text-center mt-12">
+                    <a href="projects.html" class="btn-outline inline-flex items-center gap-2">
+                        查看所有專案
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Donations Ticker -->
+        <section class="bg-secondary/50 py-6 overflow-hidden">
+            <div class="flex items-center gap-8 animate-marquee whitespace-nowrap">
+                <template v-for="(donation, idx) in [...recentDonations, ...recentDonations]" :key="idx">
+                    <div class="flex items-center gap-3 px-4">
+                        <span class="text-gold">💝</span>
+                        <span class="text-gray-300">{{ donation.name }}</span>
+                        <span class="text-gray-500">捐款</span>
+                        <span class="text-gold font-bold">NT$ {{ formatNumber(donation.amount) }}</span>
+                        <span class="text-gray-500">・{{ donation.time }}</span>
+                    </div>
+                </template>
+            </div>
+        </section>
+
+        <!-- Why Donate Section -->
+        <section class="bg-dark py-20">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">為什麼選擇我們</h2>
+                    <p class="text-gray-400">每一筆捐款都將創造深遠影響</p>
+                </div>
+
+                <div class="grid md:grid-cols-4 gap-6">
+                    <div class="glass-card p-6 text-center hover:border-gold transition-colors">
+                        <div class="text-4xl mb-4">🎓</div>
+                        <h3 class="font-bold text-lg mb-2">百年名校</h3>
+                        <p class="text-gray-400 text-sm">創校 {{ new Date().getFullYear() - schoolInfo.founded }} 年，培育無數傑出人才</p>
+                    </div>
+                    <div class="glass-card p-6 text-center hover:border-gold transition-colors">
+                        <div class="text-4xl mb-4">🏅</div>
+                        <h3 class="font-bold text-lg mb-2">體育強校</h3>
+                        <p class="text-gray-400 text-sm">累計 {{ schoolInfo.olympicMedals }} 面奧運獎牌</p>
+                    </div>
+                    <div class="glass-card p-6 text-center hover:border-gold transition-colors">
+                        <div class="text-4xl mb-4">📋</div>
+                        <h3 class="font-bold text-lg mb-2">公開透明</h3>
+                        <p class="text-gray-400 text-sm">捐款流向全程公開可查</p>
+                    </div>
+                    <div class="glass-card p-6 text-center hover:border-gold transition-colors">
+                        <div class="text-4xl mb-4">📜</div>
+                        <h3 class="font-bold text-lg mb-2">節稅優惠</h3>
+                        <p class="text-gray-400 text-sm">捐款可全額列舉扣除</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="grid md:grid-cols-4 gap-8 mb-8">
+                    <!-- About -->
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <img :src="schoolInfo.logo" alt="校徽" class="h-12 w-12 rounded-full object-cover">
+                            <div>
+                                <div class="font-bold">{{ schoolInfo.name }}</div>
+                                <div class="text-sm text-gray-500">募款平台</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm">{{ schoolInfo.slogan }}</p>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h4 class="font-bold mb-4 text-gold">快速連結</h4>
+                        <nav class="flex flex-col gap-2">
+                            <a href="projects.html" class="footer-link text-sm">所有專案</a>
+                            <a href="donate.html" class="footer-link text-sm">立即捐款</a>
+                            <a href="honor.html" class="footer-link text-sm">芳名錄</a>
+                            <a href="about.html" class="footer-link text-sm">關於我們</a>
+                        </nav>
+                    </div>
+
+                    <!-- Contact -->
+                    <div>
+                        <h4 class="font-bold mb-4 text-gold">聯絡資訊</h4>
+                        <div class="space-y-2 text-sm text-gray-400">
+                            <p>📞 {{ schoolInfo.contact.phone }}</p>
+                            <p>✉️ {{ schoolInfo.contact.email }}</p>
+                            <p>📍 {{ schoolInfo.contact.address }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Certifications -->
+                    <div>
+                        <h4 class="font-bold mb-4 text-gold">安全認證</h4>
+                        <div class="flex gap-3">
+                            <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-2xl">🔒</div>
+                            <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center text-2xl">✅</div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-3">SSL 加密傳輸・政府立案</p>
+                    </div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="border-t border-white/10 pt-6 text-center text-sm text-gray-500">
+                    <p>&copy; {{ new Date().getFullYear() }} {{ schoolInfo.name }}. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Shared Data -->
+    <script src="js/app.js"></script>
+
+    <!-- Page Script -->
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    mobileMenuOpen: false,
+                    activeFilter: 'all',
+                    projects: window.projectsData || [],
+                    recentDonations: window.recentDonationsData || [],
+                    categories: window.filterCategories || [],
+                    schoolInfo: window.schoolInfo || {}
+                }
+            },
+            computed: {
+                filteredProjects() {
+                    if (this.activeFilter === 'all') {
+                        return this.projects;
+                    }
+                    return this.projects.filter(p => p.category === this.activeFilter);
+                },
+                totalRaised() {
+                    return this.projects.reduce((sum, p) => sum + p.raised, 0);
+                },
+                totalDonors() {
+                    return this.projects.reduce((sum, p) => sum + p.donors, 0);
+                }
+            },
+            methods: {
+                formatNumber(num) {
+                    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                },
+                formatCompact(num) {
+                    if (num >= 10000000) {
+                        return (num / 10000000).toFixed(1) + '千萬';
+                    } else if (num >= 10000) {
+                        return (num / 10000).toFixed(0) + '萬';
+                    }
+                    return this.formatNumber(num);
+                },
+                calcProgress(raised, goal) {
+                    return Math.min(Math.round((raised / goal) * 100), 100);
+                }
+            }
+        }).mount('#app');
+    </script>
+
+    <!-- Marquee Animation -->
+    <style>
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            animation: marquee 30s linear infinite;
+        }
+    </style>
+</body>
+</html>

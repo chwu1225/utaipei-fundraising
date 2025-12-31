@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>線上捐款 | 臺北市立大學募款平台</title>
+    <meta name="description" content="臺北市立大學線上捐款系統，安全便捷的捐款體驗。">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark': '#0a1628',
+                        'primary': '#1e3a5f',
+                        'secondary': '#162d4a',
+                        'card': '#1a3352',
+                        'gold': '#d4a84b',
+                        'gold-light': '#e8c87a',
+                    },
+                    fontFamily: {
+                        'sans': ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="bg-dark text-white font-sans">
+    <div id="app">
+        <!-- Header -->
+        <header class="header-glass fixed top-0 left-0 right-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 md:h-20">
+                    <!-- Logo -->
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img :src="schoolInfo.logo" alt="校徽" class="h-10 w-10 rounded-full object-cover">
+                        <div class="hidden sm:block">
+                            <div class="text-lg font-bold text-white">{{ schoolInfo.name }}</div>
+                            <div class="text-xs text-gray-400">募款平台</div>
+                        </div>
+                    </a>
+
+                    <!-- Desktop Navigation -->
+                    <nav class="hidden md:flex items-center gap-8">
+                        <a href="index.html" class="nav-link">首頁</a>
+                        <a href="projects.html" class="nav-link">所有專案</a>
+                        <a href="about.html" class="nav-link">關於我們</a>
+                        <a href="honor.html" class="nav-link">芳名錄</a>
+                    </nav>
+
+                    <!-- Mobile Menu Button -->
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path v-if="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu -->
+                <div v-show="mobileMenuOpen" class="md:hidden pb-4">
+                    <nav class="flex flex-col gap-2">
+                        <a href="index.html" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300">首頁</a>
+                        <a href="projects.html" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300">所有專案</a>
+                        <a href="about.html" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300">關於我們</a>
+                        <a href="honor.html" class="px-4 py-3 rounded-lg hover:bg-white/5 text-gray-300">芳名錄</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="pt-24 pb-16 min-h-screen">
+            <div class="max-w-6xl mx-auto px-4">
+                <!-- Step Indicator -->
+                <div class="mb-12">
+                    <div class="step-indicator">
+                        <div class="step-item">
+                            <div :class="['step-circle', { 'active': currentStep >= 1, 'completed': currentStep > 1 }]">
+                                <span v-if="currentStep > 1">✓</span>
+                                <span v-else>1</span>
+                            </div>
+                            <span class="ml-2 text-sm hidden sm:inline" :class="currentStep >= 1 ? 'text-white' : 'text-gray-500'">選擇金額</span>
+                        </div>
+                        <div :class="['step-line', { 'active': currentStep > 1 }]"></div>
+                        <div class="step-item">
+                            <div :class="['step-circle', { 'active': currentStep >= 2, 'completed': currentStep > 2 }]">
+                                <span v-if="currentStep > 2">✓</span>
+                                <span v-else>2</span>
+                            </div>
+                            <span class="ml-2 text-sm hidden sm:inline" :class="currentStep >= 2 ? 'text-white' : 'text-gray-500'">填寫資料</span>
+                        </div>
+                        <div :class="['step-line', { 'active': currentStep > 2 }]"></div>
+                        <div class="step-item">
+                            <div :class="['step-circle', { 'active': currentStep >= 3 }]">3</div>
+                            <span class="ml-2 text-sm hidden sm:inline" :class="currentStep >= 3 ? 'text-white' : 'text-gray-500'">確認付款</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Main Form Area -->
+                    <div class="lg:col-span-2">
+                        <!-- Step 1: Select Amount -->
+                        <div v-show="currentStep === 1" class="glass-card p-6 md:p-8">
+                            <h2 class="text-2xl font-bold mb-6">選擇捐款方式與金額</h2>
+
+                            <!-- Donation Type -->
+                            <div class="mb-8">
+                                <label class="form-label">捐款類型</label>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <button
+                                        @click="donationType = 'once'"
+                                        :class="['p-4 rounded-xl border-2 transition-all text-center', donationType === 'once' ? 'border-gold bg-gold/10 text-gold' : 'border-white/10 text-gray-400 hover:border-white/30']"
+                                    >
+                                        <div class="text-2xl mb-2">💝</div>
+                                        <div class="font-semibold">單次捐款</div>
+                                    </button>
+                                    <button
+                                        @click="donationType = 'monthly'"
+                                        :class="['p-4 rounded-xl border-2 transition-all text-center', donationType === 'monthly' ? 'border-gold bg-gold/10 text-gold' : 'border-white/10 text-gray-400 hover:border-white/30']"
+                                    >
+                                        <div class="text-2xl mb-2">🔄</div>
+                                        <div class="font-semibold">定期定額</div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Project Selection -->
+                            <div class="mb-8">
+                                <label class="form-label">選擇捐款專案</label>
+                                <select v-model="selectedProjectId" class="form-input">
+                                    <option value="">不指定用途（由學校統籌運用）</option>
+                                    <option v-for="project in projects" :key="project.id" :value="project.id">
+                                        {{ project.icon }} {{ project.name }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <!-- Amount Selection -->
+                            <div class="mb-8">
+                                <label class="form-label">選擇金額</label>
+                                <div class="grid grid-cols-3 gap-3 mb-4">
+                                    <button
+                                        v-for="amt in presetAmounts"
+                                        :key="amt"
+                                        @click="selectAmount(amt)"
+                                        :class="['amount-btn', { 'active': selectedAmount === amt && !customAmount }]"
+                                    >
+                                        NT$ {{ formatNumber(amt) }}
+                                    </button>
+                                </div>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">NT$</span>
+                                    <input
+                                        type="number"
+                                        v-model.number="customAmount"
+                                        @focus="selectedAmount = 0"
+                                        class="form-input pl-14"
+                                        placeholder="自訂金額"
+                                        min="100"
+                                    >
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">最低捐款金額 NT$ 100</p>
+                            </div>
+
+                            <!-- Next Button -->
+                            <button
+                                @click="nextStep"
+                                :disabled="!finalAmount || finalAmount < 100"
+                                class="btn-gold w-full py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                下一步：填寫資料
+                            </button>
+                        </div>
+
+                        <!-- Step 2: Fill Information -->
+                        <div v-show="currentStep === 2" class="glass-card p-6 md:p-8">
+                            <h2 class="text-2xl font-bold mb-6">填寫捐款人資料</h2>
+
+                            <!-- Personal Info -->
+                            <div class="space-y-5 mb-8">
+                                <div class="grid md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="form-label">姓名 <span class="text-red-400">*</span></label>
+                                        <input type="text" v-model="form.name" class="form-input" placeholder="請輸入真實姓名">
+                                    </div>
+                                    <div>
+                                        <label class="form-label">手機號碼 <span class="text-red-400">*</span></label>
+                                        <input type="tel" v-model="form.phone" class="form-input" placeholder="例：0912345678">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="form-label">電子信箱 <span class="text-red-400">*</span></label>
+                                    <input type="email" v-model="form.email" class="form-input" placeholder="example@email.com">
+                                </div>
+                            </div>
+
+                            <!-- Receipt Options -->
+                            <div class="mb-8">
+                                <h3 class="font-bold mb-4">收據選項</h3>
+                                <div class="space-y-3">
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" v-model="form.needReceipt" class="w-5 h-5 rounded border-gray-600 bg-card text-gold focus:ring-gold">
+                                        <span>我需要捐款收據（可抵稅）</span>
+                                    </label>
+
+                                    <div v-if="form.needReceipt" class="pl-8 space-y-4 mt-4">
+                                        <div>
+                                            <label class="form-label">身分證字號</label>
+                                            <input type="text" v-model="form.idNumber" class="form-input" placeholder="開立收據用">
+                                        </div>
+                                        <div>
+                                            <label class="form-label">收據寄送地址</label>
+                                            <input type="text" v-model="form.address" class="form-input" placeholder="請輸入完整地址">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Options -->
+                            <div class="mb-8 space-y-3">
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox" v-model="form.anonymous" class="w-5 h-5 rounded border-gray-600 bg-card text-gold focus:ring-gold">
+                                    <span>匿名捐款（不公開姓名）</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox" v-model="form.showOnHonor" class="w-5 h-5 rounded border-gray-600 bg-card text-gold focus:ring-gold">
+                                    <span>願意登錄芳名錄</span>
+                                </label>
+                            </div>
+
+                            <!-- Message -->
+                            <div class="mb-8">
+                                <label class="form-label">留言（選填）</label>
+                                <textarea v-model="form.message" rows="3" class="form-input" placeholder="給學校或學生的話..."></textarea>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="flex gap-4">
+                                <button @click="prevStep" class="btn-outline flex-1 py-4">
+                                    上一步
+                                </button>
+                                <button
+                                    @click="nextStep"
+                                    :disabled="!isStep2Valid"
+                                    class="btn-gold flex-1 py-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    下一步：確認付款
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Confirm & Pay -->
+                        <div v-show="currentStep === 3" class="glass-card p-6 md:p-8">
+                            <h2 class="text-2xl font-bold mb-6">確認捐款資訊</h2>
+
+                            <!-- Summary -->
+                            <div class="bg-card rounded-xl p-6 mb-8">
+                                <div class="space-y-4">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">捐款專案</span>
+                                        <span class="font-semibold">{{ selectedProject ? selectedProject.name : '不指定用途' }}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">捐款類型</span>
+                                        <span class="font-semibold">{{ donationType === 'once' ? '單次捐款' : '定期定額' }}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">捐款人</span>
+                                        <span class="font-semibold">{{ form.anonymous ? '匿名' : form.name }}</span>
+                                    </div>
+                                    <div class="border-t border-white/10 pt-4 flex justify-between items-center">
+                                        <span class="text-gray-400">捐款金額</span>
+                                        <span class="text-3xl font-bold text-gold">NT$ {{ formatNumber(finalAmount) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Methods -->
+                            <div class="mb-8">
+                                <h3 class="font-bold mb-4">選擇付款方式</h3>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <button
+                                        v-for="method in paymentMethods"
+                                        :key="method.id"
+                                        @click="paymentMethod = method.id"
+                                        :class="['p-4 rounded-xl border-2 transition-all text-center', paymentMethod === method.id ? 'border-gold bg-gold/10' : 'border-white/10 hover:border-white/30']"
+                                    >
+                                        <div class="text-2xl mb-2">{{ method.icon }}</div>
+                                        <div class="text-sm font-semibold">{{ method.name }}</div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Terms Agreement -->
+                            <div class="mb-8">
+                                <label class="flex items-start gap-3 cursor-pointer">
+                                    <input type="checkbox" v-model="agreedToTerms" class="w-5 h-5 mt-0.5 rounded border-gray-600 bg-card text-gold focus:ring-gold">
+                                    <span class="text-sm text-gray-400">
+                                        我已閱讀並同意
+                                        <a href="#" class="text-gold hover:underline">捐款服務條款</a>
+                                        及
+                                        <a href="#" class="text-gold hover:underline">隱私權政策</a>
+                                    </span>
+                                </label>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="flex gap-4">
+                                <button @click="prevStep" class="btn-outline flex-1 py-4">
+                                    上一步
+                                </button>
+                                <button
+                                    @click="submitDonation"
+                                    :disabled="!agreedToTerms || !paymentMethod"
+                                    class="btn-gold flex-1 py-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    確認付款
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="lg:col-span-1">
+                        <div class="glass-card p-6 sticky top-28">
+                            <!-- Selected Project Info -->
+                            <div v-if="selectedProject" class="mb-6">
+                                <div :class="['h-24 rounded-xl bg-gradient-to-br flex items-center justify-center mb-4', selectedProject.gradient]">
+                                    <span class="text-4xl">{{ selectedProject.icon }}</span>
+                                </div>
+                                <h3 class="font-bold text-lg mb-2">{{ selectedProject.name }}</h3>
+                                <p class="text-gray-400 text-sm mb-4">{{ selectedProject.description }}</p>
+
+                                <!-- Progress -->
+                                <div class="mb-4">
+                                    <div class="flex justify-between text-sm mb-2">
+                                        <span class="text-gray-400">募款進度</span>
+                                        <span class="text-gold font-bold">{{ calcProgress(selectedProject.raised, selectedProject.goal) }}%</span>
+                                    </div>
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill" :style="{ width: calcProgress(selectedProject.raised, selectedProject.goal) + '%' }"></div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <div class="text-gray-500">已募得</div>
+                                        <div class="text-gold font-bold">NT$ {{ formatNumber(selectedProject.raised) }}</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-gray-500">目標</div>
+                                        <div class="font-bold">NT$ {{ formatNumber(selectedProject.goal) }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- General Donation Info -->
+                            <div v-else class="mb-6 text-center py-8">
+                                <div class="text-5xl mb-4">💖</div>
+                                <h3 class="font-bold text-lg mb-2">不指定用途捐款</h3>
+                                <p class="text-gray-400 text-sm">您的捐款將由學校統籌運用於最需要的項目</p>
+                            </div>
+
+                            <!-- Security Info -->
+                            <div class="border-t border-white/10 pt-6">
+                                <h4 class="font-bold mb-4 text-sm text-gray-400">安全保障</h4>
+                                <div class="space-y-3 text-sm">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-green-400">🔒</span>
+                                        <span class="text-gray-400">SSL 256位元加密傳輸</span>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-green-400">✅</span>
+                                        <span class="text-gray-400">政府立案公立大學</span>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-green-400">📋</span>
+                                        <span class="text-gray-400">捐款可全額列舉扣除</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Success Modal -->
+        <div v-if="showSuccessModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+            <div class="glass-card max-w-md w-full p-8 text-center">
+                <div class="text-6xl mb-4">🎉</div>
+                <h2 class="text-2xl font-bold mb-2">感謝您的愛心捐款！</h2>
+                <p class="text-gray-400 mb-6">您已成功捐款 <span class="text-gold font-bold">NT$ {{ formatNumber(finalAmount) }}</span></p>
+                <p class="text-sm text-gray-500 mb-8">系統將發送確認信至 {{ form.email }}</p>
+                <div class="flex gap-4">
+                    <a href="index.html" class="btn-outline flex-1 py-3">返回首頁</a>
+                    <a href="honor.html" class="btn-gold flex-1 py-3">查看芳名錄</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="border-t border-white/10 pt-6 text-center text-sm text-gray-500">
+                    <p>&copy; {{ new Date().getFullYear() }} {{ schoolInfo.name }}. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Shared Data -->
+    <script src="js/app.js"></script>
+
+    <!-- Page Script -->
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    mobileMenuOpen: false,
+                    currentStep: 1,
+                    donationType: 'once',
+                    selectedProjectId: '',
+                    selectedAmount: 1000,
+                    customAmount: null,
+                    presetAmounts: [500, 1000, 3000, 5000, 10000, 30000],
+                    form: {
+                        name: '',
+                        phone: '',
+                        email: '',
+                        needReceipt: false,
+                        idNumber: '',
+                        address: '',
+                        anonymous: false,
+                        showOnHonor: true,
+                        message: ''
+                    },
+                    paymentMethod: '',
+                    paymentMethods: [
+                        { id: 'credit', name: '信用卡', icon: '💳' },
+                        { id: 'atm', name: 'ATM 轉帳', icon: '🏧' },
+                        { id: 'cvs', name: '超商代碼', icon: '🏪' },
+                        { id: 'linepay', name: 'LINE Pay', icon: '📱' }
+                    ],
+                    agreedToTerms: false,
+                    showSuccessModal: false,
+                    projects: window.projectsData || [],
+                    schoolInfo: window.schoolInfo || {}
+                }
+            },
+            computed: {
+                selectedProject() {
+                    if (!this.selectedProjectId) return null;
+                    return this.projects.find(p => p.id === parseInt(this.selectedProjectId));
+                },
+                finalAmount() {
+                    return this.customAmount || this.selectedAmount;
+                },
+                isStep2Valid() {
+                    return this.form.name && this.form.phone && this.form.email;
+                }
+            },
+            methods: {
+                formatNumber(num) {
+                    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                },
+                calcProgress(raised, goal) {
+                    return Math.min(Math.round((raised / goal) * 100), 100);
+                },
+                selectAmount(amt) {
+                    this.selectedAmount = amt;
+                    this.customAmount = null;
+                },
+                nextStep() {
+                    if (this.currentStep < 3) {
+                        this.currentStep++;
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                },
+                prevStep() {
+                    if (this.currentStep > 1) {
+                        this.currentStep--;
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                },
+                submitDonation() {
+                    // Simulate submission
+                    this.showSuccessModal = true;
+                }
+            },
+            mounted() {
+                // Parse URL params
+                const params = new URLSearchParams(window.location.search);
+                const projectId = params.get('project');
+                if (projectId) {
+                    this.selectedProjectId = projectId;
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
