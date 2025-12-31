@@ -3,6 +3,36 @@
    Reference: SinoPac Donation Platform Style
    ============================================ */
 
+/* --- Demo Ribbon (計中展示版) --- */
+.demo-ribbon {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    overflow: hidden;
+    width: 150px;
+    height: 150px;
+    pointer-events: none;
+}
+
+.demo-ribbon span {
+    position: absolute;
+    display: block;
+    width: 225px;
+    padding: 10px 0;
+    background: linear-gradient(135deg, rgba(212, 168, 75, 0.85) 0%, rgba(180, 140, 60, 0.85) 100%);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+    color: var(--bg-dark);
+    font-size: 13px;
+    font-weight: bold;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.3);
+    text-align: center;
+    left: -55px;
+    top: 35px;
+    transform: rotate(-45deg);
+    letter-spacing: 1px;
+}
+
 /* --- CSS Variables --- */
 :root {
     /* Primary Colors - Starry Night Theme */
