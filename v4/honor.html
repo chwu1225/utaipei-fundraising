@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-gsap-manual>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>芳名錄 | 臺北市立大學募款平台</title>
+    <meta name="description" content="感謝所有支持臺北市立大學的捐款者，您的愛心是我們前進的動力。芳名錄記錄每一份珍貴的支持。">
+    <meta name="keywords" content="臺北市立大學,募款,捐款,芳名錄,感謝,捐款者">
+    <meta name="author" content="臺北市立大學">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://utaipei-fundraising.zeabur.app/v4/honor.html">
+    <meta property="og:title" content="芳名錄 | 臺北市立大學募款平台">
+    <meta property="og:description" content="感謝所有支持臺北市立大學的捐款者，您的愛心是我們前進的動力。">
+    <meta property="og:image" content="images/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="芳名錄 | 臺北市立大學募款平台">
+    <meta name="twitter:description" content="感謝所有支持臺北市立大學的捐款者。">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://utaipei-fundraising.zeabur.app/v4/honor.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark': '#0a1628',
+                        'primary': '#1e3a5f',
+                        'secondary': '#162d4a',
+                        'card': '#1a3352',
+                        'gold': '#d4a84b',
+                        'gold-light': '#e8c87a',
+                    },
+                    fontFamily: {
+                        'sans': ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Aurora CSS -->
+    <link rel="stylesheet" href="css/aurora.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- GSAP CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Page Specific Styles -->
+    <style>
+        /* Honor Page Hero */
+        .honor-hero {
+            padding-top: 120px;
+            padding-bottom: 60px;
+            text-align: center;
+        }
+
+        /* Donor Tier Badges */
+        .donor-tier-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .donor-tier-badge.diamond {
+            background: linear-gradient(135deg, rgba(185, 242, 255, 0.2), rgba(100, 200, 255, 0.2));
+            border: 1px solid rgba(185, 242, 255, 0.5);
+            color: #b9f2ff;
+        }
+
+        .donor-tier-badge.platinum {
+            background: linear-gradient(135deg, rgba(229, 228, 226, 0.2), rgba(180, 180, 180, 0.2));
+            border: 1px solid rgba(229, 228, 226, 0.5);
+            color: #e5e4e2;
+        }
+
+        .donor-tier-badge.gold {
+            background: linear-gradient(135deg, rgba(212, 168, 75, 0.2), rgba(232, 200, 122, 0.2));
+            border: 1px solid rgba(212, 168, 75, 0.5);
+            color: #d4a84b;
+        }
+
+        .donor-tier-badge.silver {
+            background: linear-gradient(135deg, rgba(192, 192, 192, 0.2), rgba(169, 169, 169, 0.2));
+            border: 1px solid rgba(192, 192, 192, 0.5);
+            color: #c0c0c0;
+        }
+
+        .donor-tier-badge.bronze {
+            background: linear-gradient(135deg, rgba(205, 127, 50, 0.2), rgba(184, 115, 51, 0.2));
+            border: 1px solid rgba(205, 127, 50, 0.5);
+            color: #cd7f32;
+        }
+
+        /* Enhanced Donor Card */
+        .donor-card {
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-normal);
+        }
+
+        .donor-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .donor-card:hover::before {
+            opacity: 1;
+        }
+
+        .donor-card.featured {
+            border-color: rgba(212, 168, 75, 0.3);
+            background: linear-gradient(135deg, rgba(26, 51, 82, 0.8), rgba(30, 58, 95, 0.6));
+        }
+
+        .donor-card.featured::before {
+            opacity: 1;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-gold-light), var(--accent-gold));
+        }
+
+        /* Avatar Styles by Tier */
+        .donor-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            flex-shrink: 0;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .donor-card:hover .donor-avatar {
+            transform: scale(1.1);
+        }
+
+        .donor-avatar.diamond {
+            background: linear-gradient(135deg, #b9f2ff, #64c8ff);
+            color: #0a1628;
+            box-shadow: 0 0 20px rgba(185, 242, 255, 0.4);
+        }
+
+        .donor-avatar.platinum {
+            background: linear-gradient(135deg, #e5e4e2, #b4b4b4);
+            color: #0a1628;
+            box-shadow: 0 0 20px rgba(229, 228, 226, 0.4);
+        }
+
+        .donor-avatar.gold {
+            background: linear-gradient(135deg, #d4a84b, #e8c87a);
+            color: #0a1628;
+            box-shadow: 0 0 20px rgba(212, 168, 75, 0.4);
+        }
+
+        .donor-avatar.silver {
+            background: linear-gradient(135deg, #c0c0c0, #a9a9a9);
+            color: #0a1628;
+            box-shadow: 0 0 15px rgba(192, 192, 192, 0.3);
+        }
+
+        .donor-avatar.bronze {
+            background: linear-gradient(135deg, #cd7f32, #b87333);
+            color: #0a1628;
+            box-shadow: 0 0 15px rgba(205, 127, 50, 0.3);
+        }
+
+        /* Stats Cards Enhanced */
+        .stats-card {
+            background: rgba(26, 51, 82, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(212, 168, 75, 0.3);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .count-up {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #d4a84b;
+            display: inline-block;
+        }
+
+        /* Filter Tabs Enhanced */
+        .filter-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        /* Message Wall Grid */
+        .message-wall {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        @media (max-width: 640px) {
+            .message-wall {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Load More Button Animation */
+        .btn-load-more {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-load-more.loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { left: 100%; }
+        }
+
+        /* Masonry-like effect for messages */
+        .message-card {
+            break-inside: avoid;
+        }
+
+        /* Highlight animation for new entries */
+        @keyframes highlight-new {
+            0% { box-shadow: 0 0 0 0 rgba(212, 168, 75, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(212, 168, 75, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 168, 75, 0); }
+        }
+
+        .donor-card.new-entry {
+            animation: highlight-new 2s ease-out;
+        }
+
+        /* Featured Donor Highlight */
+        .donor-card.diamond-featured {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 768px) {
+            .donor-card.diamond-featured {
+                grid-column: span 1;
+            }
+        }
+
+        /* Tier Icon Pulse */
+        .tier-icon-pulse {
+            animation: icon-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes icon-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body class="bg-dark text-white font-sans">
+    <!-- Aurora Background Layer (Fixed) -->
+    <div class="aurora-container">
+        <div class="aurora-layer aurora-layer-1"></div>
+        <div class="aurora-layer aurora-layer-2"></div>
+        <div class="aurora-layer aurora-layer-3"></div>
+        <div class="aurora-overlay"></div>
+        <div class="aurora-stars"></div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor"></div>
+    <div class="cursor-dot"></div>
+
+    <!-- Page Transition Layer -->
+    <div class="page-transition-layer"></div>
+
+    <!-- Vue App Container -->
+    <div id="app" class="starry-bg min-h-screen relative z-10">
+        <!-- Demo Ribbon -->
+        <div class="demo-ribbon">
+            <span>V4 Pro</span>
+        </div>
+
+        <!-- Shooting Stars -->
+        <div class="shooting-stars">
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+        </div>
+
+        <!-- Header -->
+        <header class="header-glass fixed top-0 left-0 right-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 md:h-20">
+                    <!-- Logo -->
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img :src="schoolInfo.logo" alt="校徽" class="h-10 w-10 rounded-full object-cover border-2 border-gold/30">
+                        <div class="hidden sm:block">
+                            <div class="text-lg font-bold text-gold">{{ schoolInfo.name }}</div>
+                            <div class="text-xs text-gray-400">募款平台</div>
+                        </div>
+                    </a>
+
+                    <!-- Navigation -->
+                    <nav class="hidden md:flex items-center gap-8">
+                        <a href="index.html" class="nav-link">首頁</a>
+                        <a href="projects.html" class="nav-link">專案總覽</a>
+                        <a href="about.html" class="nav-link">關於我們</a>
+                        <a href="honor.html" class="nav-link active">芳名錄</a>
+                    </nav>
+
+                    <!-- CTA Button -->
+                    <a href="donate.html" class="btn-gold btn-magnetic ripple text-sm md:text-base" data-gsap="magnetic">
+                        立即捐款
+                    </a>
+
+                    <!-- Mobile Menu Button -->
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 text-gray-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu -->
+                <div v-show="mobileMenuOpen" class="md:hidden py-4 border-t border-white/10">
+                    <nav class="flex flex-col gap-4">
+                        <a href="index.html" class="text-gray-300 hover:text-gold">首頁</a>
+                        <a href="projects.html" class="text-gray-300 hover:text-gold">專案總覽</a>
+                        <a href="about.html" class="text-gray-300 hover:text-gold">關於我們</a>
+                        <a href="honor.html" class="text-gold">芳名錄</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Header / Hero Section -->
+        <section class="honor-hero relative z-10">
+            <div class="max-w-4xl mx-auto px-4">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 gradient-text gsap-reveal" data-gsap="text-reveal">
+                    感謝您的支持
+                </h1>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto gsap-reveal" data-gsap="reveal" data-gsap-delay="0.2">
+                    每一份捐款都是對教育的珍貴投資，每一個名字都代表著無私的愛心。<br>
+                    感謝您與我們一起點亮學子的未來。
+                </p>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="py-12 relative z-10" data-gsap="cards-container">
+            <div class="max-w-5xl mx-auto px-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="stats-card card-3d" data-gsap="card">
+                        <div class="card-3d-inner">
+                            <div class="count-up" data-countup :data-target="totalStats.totalDonors" data-gsap="countup">0</div>
+                            <div class="text-sm text-gray-400 mt-2">累計捐款人數</div>
+                        </div>
+                        <div class="card-3d-shine"></div>
+                    </div>
+                    <div class="stats-card card-3d" data-gsap="card">
+                        <div class="card-3d-inner">
+                            <div class="count-up" data-countup :data-target="totalStats.totalAmount" data-gsap="countup">0</div>
+                            <div class="text-sm text-gray-400 mt-2">累計捐款金額 (NT$)</div>
+                        </div>
+                        <div class="card-3d-shine"></div>
+                    </div>
+                    <div class="stats-card card-3d" data-gsap="card">
+                        <div class="card-3d-inner">
+                            <div class="count-up" data-countup :data-target="totalStats.thisYearDonors" data-gsap="countup">0</div>
+                            <div class="text-sm text-gray-400 mt-2">本年度捐款人數</div>
+                        </div>
+                        <div class="card-3d-shine"></div>
+                    </div>
+                    <div class="stats-card card-3d" data-gsap="card">
+                        <div class="card-3d-inner">
+                            <div class="count-up" data-countup :data-target="totalStats.messagesCount" data-gsap="countup">0</div>
+                            <div class="text-sm text-gray-400 mt-2">愛心留言數</div>
+                        </div>
+                        <div class="card-3d-shine"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filter Section -->
+        <section class="py-8 relative z-10">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 gradient-text gsap-reveal" data-gsap="text-reveal">捐款者名錄</h2>
+                    <p class="text-gray-400 gsap-reveal" data-gsap="reveal" data-gsap-delay="0.1">依捐款等級瀏覽，向每一位支持者致敬</p>
+                </div>
+
+                <!-- Tier Filter Tags -->
+                <div class="filter-tabs mb-10 gsap-stagger" data-gsap="stagger">
+                    <button
+                        v-for="tier in tierFilters"
+                        :key="tier.id"
+                        @click="activeTier = tier.id"
+                        :class="['filter-tag', { 'active': activeTier === tier.id }]"
+                    >
+                        <span class="tier-icon-pulse">{{ tier.icon }}</span> {{ tier.name }}
+                    </button>
+                </div>
+
+                <!-- Search Box -->
+                <div class="max-w-md mx-auto mb-10 gsap-reveal" data-gsap="reveal">
+                    <div class="search-box">
+                        <span class="search-icon">&#128269;</span>
+                        <input
+                            type="text"
+                            v-model="searchQuery"
+                            class="form-input"
+                            placeholder="搜尋捐款者姓名..."
+                        >
+                        <button
+                            v-show="searchQuery"
+                            @click="searchQuery = ''"
+                            class="clear-btn visible"
+                        >&#10005;</button>
+                    </div>
+                </div>
+
+                <!-- Donors Grid -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10" data-gsap="cards-container">
+                    <div
+                        v-for="donor in displayedDonors"
+                        :key="donor.id"
+                        :class="['donor-card card-3d p-5', { 'featured': donor.tier === 'diamond' || donor.tier === 'platinum' }]"
+                        data-gsap="card"
+                    >
+                        <div class="card-3d-inner">
+                            <div class="flex items-start gap-4">
+                                <!-- Avatar -->
+                                <div :class="['donor-avatar', donor.tier]">
+                                    {{ donor.avatar }}
+                                </div>
+
+                                <!-- Info -->
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2 flex-wrap mb-1">
+                                        <h3 class="font-bold text-lg truncate">{{ donor.name }}</h3>
+                                        <span v-if="donor.title" class="text-xs text-gold">{{ donor.title }}</span>
+                                    </div>
+
+                                    <!-- Tier Badge -->
+                                    <span :class="['donor-tier-badge', donor.tier]">
+                                        {{ getTierInfo(donor.tier).icon }} {{ getTierInfo(donor.tier).name }}
+                                    </span>
+
+                                    <!-- Amount -->
+                                    <div class="text-gold font-bold mt-2">
+                                        {{ utils.formatCurrency(donor.amount) }}
+                                    </div>
+
+                                    <!-- Projects -->
+                                    <div v-if="donor.projects && donor.projects.length" class="text-xs text-gray-500 mt-1">
+                                        支持：{{ donor.projects.join('、') }}
+                                    </div>
+
+                                    <!-- Message -->
+                                    <p v-if="donor.message" class="text-sm text-gray-400 mt-3 italic">
+                                        「{{ donor.message }}」
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-3d-shine"></div>
+                    </div>
+                </div>
+
+                <!-- No Results -->
+                <div v-if="filteredDonors.length === 0" class="text-center py-12">
+                    <div class="text-6xl mb-4">&#128269;</div>
+                    <p class="text-gray-400">沒有找到符合條件的捐款者</p>
+                </div>
+
+                <!-- Load More Button -->
+                <div v-if="hasMoreDonors" class="text-center gsap-reveal" data-gsap="reveal">
+                    <button
+                        @click="loadMore"
+                        :class="['btn-outline btn-load-more px-8 py-3', { 'loading': isLoading }]"
+                        :disabled="isLoading"
+                    >
+                        {{ isLoading ? '載入中...' : '載入更多' }}
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Message Wall Section -->
+        <section class="py-16 bg-primary/30 relative z-10">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 gradient-text gsap-reveal" data-gsap="text-reveal">愛心留言牆</h2>
+                    <p class="text-gray-400 gsap-reveal" data-gsap="reveal" data-gsap-delay="0.1">來自捐款者的真摯話語，傳遞愛與祝福</p>
+                </div>
+
+                <!-- Message Wall -->
+                <div class="message-wall" data-gsap="cards-container">
+                    <div
+                        v-for="message in donorMessages"
+                        :key="message.id"
+                        class="message-card card-3d"
+                        data-gsap="card"
+                    >
+                        <div class="card-3d-inner">
+                            <div class="message-content">
+                                「{{ message.message }}」
+                            </div>
+                            <div class="message-author">
+                                <div class="message-avatar">
+                                    {{ message.avatar }}
+                                </div>
+                                <div>
+                                    <div class="font-medium">{{ message.name }}</div>
+                                    <div class="text-xs text-gray-500">{{ message.project }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-3d-shine"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-20 relative z-10">
+            <div class="max-w-3xl mx-auto px-4 text-center">
+                <div class="glass-card glass-enhanced p-10 card-3d" data-gsap="card">
+                    <div class="card-3d-inner">
+                        <h2 class="text-2xl md:text-3xl font-bold mb-4 gradient-text">
+                            加入我們的芳名錄
+                        </h2>
+                        <p class="text-gray-400 mb-8 max-w-xl mx-auto">
+                            您的每一份捐款，都將化為學子前進的動力。<br>
+                            留下您的名字，成為這份愛的見證者。
+                        </p>
+                        <div class="flex flex-col sm:flex-row justify-center gap-4">
+                            <a href="donate.html" class="btn-gold btn-magnetic ripple text-lg px-10 py-4 animate-pulse-glow" data-gsap="magnetic">
+                                立即捐款
+                            </a>
+                            <a href="projects.html" class="btn-outline text-lg px-10 py-4">
+                                瀏覽專案
+                            </a>
+                        </div>
+
+                        <!-- Trust Badges -->
+                        <div class="flex justify-center gap-4 mt-8">
+                            <span class="trust-badge security">
+                                &#128274; 安全加密
+                            </span>
+                            <span class="trust-badge">
+                                &#10003; 可抵稅捐款
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-3d-shine"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer relative z-10">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="grid md:grid-cols-4 gap-8 mb-8">
+                    <!-- Logo & Info -->
+                    <div class="md:col-span-2">
+                        <div class="flex items-center gap-3 mb-4">
+                            <img :src="schoolInfo.logo" alt="校徽" class="h-12 w-12 rounded-full object-cover">
+                            <div>
+                                <div class="text-lg font-bold text-gold">{{ schoolInfo.name }}</div>
+                                <div class="text-sm text-gray-400">{{ schoolInfo.nameEn }}</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4">
+                            {{ schoolInfo.contact.address }}<br>
+                            電話：{{ schoolInfo.contact.phone }}<br>
+                            Email：{{ schoolInfo.contact.email }}
+                        </p>
+                        <div class="flex gap-4">
+                            <a :href="schoolInfo.social.facebook" target="_blank" class="text-gray-400 hover:text-gold text-xl">&#128218;</a>
+                            <a :href="schoolInfo.social.instagram" target="_blank" class="text-gray-400 hover:text-gold text-xl">&#128247;</a>
+                            <a :href="schoolInfo.social.youtube" target="_blank" class="text-gray-400 hover:text-gold text-xl">&#128250;</a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h4 class="font-bold mb-4">快速連結</h4>
+                        <nav class="flex flex-col gap-2">
+                            <a href="projects.html" class="footer-link">專案總覽</a>
+                            <a href="donate.html" class="footer-link">線上捐款</a>
+                            <a href="honor.html" class="footer-link">芳名錄</a>
+                            <a href="about.html" class="footer-link">關於我們</a>
+                        </nav>
+                    </div>
+
+                    <!-- Legal -->
+                    <div>
+                        <h4 class="font-bold mb-4">法律資訊</h4>
+                        <nav class="flex flex-col gap-2">
+                            <a href="#" class="footer-link">隱私權政策</a>
+                            <a href="#" class="footer-link">使用條款</a>
+                            <a href="#" class="footer-link">捐款須知</a>
+                            <a href="#" class="footer-link">聯絡我們</a>
+                        </nav>
+                    </div>
+                </div>
+
+                <div class="border-t border-white/10 pt-6 text-center text-sm text-gray-500">
+                    <p>© 2025 {{ schoolInfo.name }}. All Rights Reserved.</p>
+                    <p class="mt-2">本網站為展示用途，實際捐款請至學校官方管道</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Back to Top Button -->
+        <button class="back-to-top" aria-label="返回頂端" @click="scrollToTop">
+            &#8593;
+        </button>
+    </div>
+
+    <!-- Shared JS (Data & Utilities) -->
+    <script src="js/app.js"></script>
+
+    <!-- GSAP Animations Module -->
+    <script src="js/gsap-animations.js"></script>
+
+    <!-- Page Vue App -->
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    schoolInfo: window.schoolInfo,
+                    donors: window.donorsData,
+                    utils: window.utils,
+                    mobileMenuOpen: false,
+                    activeTier: 'all',
+                    searchQuery: '',
+                    displayLimit: 9,
+                    isLoading: false,
+
+                    // Tier Filters
+                    tierFilters: [
+                        { id: 'all', name: '全部', icon: '&#127919;' },
+                        { id: 'diamond', name: '鑽石級', icon: '&#128142;' },
+                        { id: 'platinum', name: '白金級', icon: '&#128081;' },
+                        { id: 'gold', name: '金質級', icon: '&#127942;' },
+                        { id: 'silver', name: '銀質級', icon: '&#129352;' },
+                        { id: 'bronze', name: '銅質級', icon: '&#129353;' }
+                    ],
+
+                    // Extended donor data with more tiers
+                    extendedDonors: [
+                        // Diamond ($500,000+)
+                        { id: 101, name: '鴻海教育基金會', amount: 1000000, tier: 'diamond', title: '榮譽創辦人', projects: ['學術研究發展基金', '智慧教室設備升級'], message: '教育是國家根本，投資教育就是投資未來', avatar: '鴻' },
+                        { id: 102, name: '台積電文教基金會', amount: 800000, tier: 'diamond', title: '特別貢獻', projects: ['體育選手培訓基金'], message: '培育人才，回饋社會', avatar: '台' },
+
+                        // Platinum ($100,000-499,999)
+                        { id: 1, name: '財團法人育英基金會', amount: 500000, tier: 'platinum', title: '榮譽贊助', projects: ['學術研究發展基金'], message: '期許北市大培育更多優秀人才', avatar: '育' },
+                        { id: 2, name: '永豐金控', amount: 300000, tier: 'platinum', title: '企業典範', projects: ['體育選手培訓基金', '清寒學生獎學金'], message: '支持教育，回饋社會', avatar: '永' },
+                        { id: 3, name: '中華民國校友總會', amount: 250000, tier: 'platinum', title: '傑出校友', projects: ['智慧教室設備升級'], message: '飲水思源，薪火相傳', avatar: '校' },
+                        { id: 103, name: '聯發科技教育基金會', amount: 200000, tier: 'platinum', title: '產學合作', projects: ['學術研究發展基金'], message: '科技創新，教育先行', avatar: '聯' },
+
+                        // Gold ($50,000-99,999)
+                        { id: 4, name: '陳明德', amount: 80000, tier: 'gold', projects: ['體育選手培訓基金'], message: '支持體育發展，為國爭光', avatar: '陳' },
+                        { id: 5, name: '林秀華', amount: 60000, tier: 'gold', projects: ['清寒學生獎學金'], message: '希望能幫助更多需要的學生', avatar: '林' },
+                        { id: 6, name: '張文傑', amount: 50000, tier: 'gold', projects: ['學術研究發展基金'], message: '研究是進步的動力', avatar: '張' },
+                        { id: 7, name: '王雅芬', amount: 50000, tier: 'gold', projects: ['緊急助學金'], message: '願能及時幫助需要的人', avatar: '王' },
+                        { id: 104, name: '黃志明', amount: 55000, tier: 'gold', projects: ['智慧教室設備升級'], message: '數位教育是趨勢', avatar: '黃' },
+
+                        // Silver ($10,000-49,999)
+                        { id: 8, name: '李建宏', amount: 30000, tier: 'silver', projects: ['智慧教室設備升級'], message: '', avatar: '李' },
+                        { id: 9, name: '黃淑娟', amount: 25000, tier: 'silver', projects: ['校園環境美化計畫'], message: '期待美麗的校園環境', avatar: '黃' },
+                        { id: 10, name: '吳志明', amount: 20000, tier: 'silver', projects: ['體育選手培訓基金'], message: '加油！為國爭光', avatar: '吳' },
+                        { id: 11, name: '許家豪', amount: 15000, tier: 'silver', projects: ['清寒學生獎學金'], message: '教育改變命運', avatar: '許' },
+                        { id: 12, name: '楊美玲', amount: 12000, tier: 'silver', projects: ['學術研究發展基金'], message: '', avatar: '楊' },
+                        { id: 13, name: '劉俊宇', amount: 10000, tier: 'silver', projects: ['緊急助學金'], message: '小小心意，大大祝福', avatar: '劉' },
+                        { id: 105, name: '趙婉如', amount: 18000, tier: 'silver', projects: ['清寒學生獎學金'], message: '知識改變命運', avatar: '趙' },
+                        { id: 106, name: '周大偉', amount: 22000, tier: 'silver', projects: ['體育選手培訓基金'], message: '', avatar: '周' },
+
+                        // Bronze ($1,000-9,999)
+                        { id: 14, name: '周○○', amount: 8000, tier: 'bronze', projects: ['體育選手培訓基金'], message: '', avatar: '周' },
+                        { id: 15, name: '鄭○○', amount: 5000, tier: 'bronze', projects: ['清寒學生獎學金'], message: '祝福學弟妹', avatar: '鄭' },
+                        { id: 16, name: '蔡○○', amount: 5000, tier: 'bronze', projects: ['智慧教室設備升級'], message: '', avatar: '蔡' },
+                        { id: 17, name: '謝○○', amount: 3000, tier: 'bronze', projects: ['校園環境美化計畫'], message: '校園是我們共同的家', avatar: '謝' },
+                        { id: 18, name: '郭○○', amount: 2000, tier: 'bronze', projects: ['緊急助學金'], message: '', avatar: '郭' },
+                        { id: 19, name: '洪○○', amount: 1500, tier: 'bronze', projects: ['學術研究發展基金'], message: '', avatar: '洪' },
+                        { id: 20, name: '曾○○', amount: 1000, tier: 'bronze', projects: ['體育選手培訓基金'], message: '運動家精神', avatar: '曾' },
+                        { id: 107, name: '呂○○', amount: 3500, tier: 'bronze', projects: ['清寒學生獎學金'], message: '', avatar: '呂' },
+                        { id: 108, name: '邱○○', amount: 2500, tier: 'bronze', projects: ['緊急助學金'], message: '及時雨', avatar: '邱' },
+                        { id: 109, name: '施○○', amount: 4000, tier: 'bronze', projects: ['校園環境美化計畫'], message: '', avatar: '施' }
+                    ],
+
+                    // Statistics
+                    totalStats: {
+                        totalDonors: 4211,
+                        totalAmount: 20000000,
+                        thisYearDonors: 892,
+                        messagesCount: 156
+                    }
+                }
+            },
+            computed: {
+                filteredDonors() {
+                    let result = this.extendedDonors;
+
+                    // Filter by tier
+                    if (this.activeTier !== 'all') {
+                        result = result.filter(d => d.tier === this.activeTier);
+                    }
+
+                    // Filter by search query
+                    if (this.searchQuery.trim()) {
+                        const query = this.searchQuery.toLowerCase();
+                        result = result.filter(d =>
+                            d.name.toLowerCase().includes(query) ||
+                            (d.message && d.message.toLowerCase().includes(query))
+                        );
+                    }
+
+                    // Sort by amount (highest first)
+                    return result.sort((a, b) => b.amount - a.amount);
+                },
+                displayedDonors() {
+                    return this.filteredDonors.slice(0, this.displayLimit);
+                },
+                hasMoreDonors() {
+                    return this.filteredDonors.length > this.displayLimit;
+                },
+                donorMessages() {
+                    // Get donors with messages
+                    return this.extendedDonors
+                        .filter(d => d.message && d.message.trim())
+                        .map(d => ({
+                            id: d.id,
+                            name: d.name,
+                            avatar: d.avatar,
+                            message: d.message,
+                            project: d.projects ? d.projects[0] : ''
+                        }))
+                        .slice(0, 8);
+                }
+            },
+            methods: {
+                getTierInfo(tier) {
+                    const tiers = {
+                        diamond: { name: '鑽石級', icon: '&#128142;' },
+                        platinum: { name: '白金級', icon: '&#128081;' },
+                        gold: { name: '金質級', icon: '&#127942;' },
+                        silver: { name: '銀質級', icon: '&#129352;' },
+                        bronze: { name: '銅質級', icon: '&#129353;' }
+                    };
+                    return tiers[tier] || { name: '感謝捐款', icon: '&#128153;' };
+                },
+                loadMore() {
+                    this.isLoading = true;
+                    // Simulate loading delay
+                    setTimeout(() => {
+                        this.displayLimit += 6;
+                        this.isLoading = false;
+
+                        // Re-initialize 3D card tilt for new cards
+                        this.$nextTick(() => {
+                            this.init3DCardTilt();
+                        });
+                    }, 500);
+                },
+                scrollToTop() {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                },
+                initCustomCursor() {
+                    // Only on desktop
+                    if (window.matchMedia('(max-width: 768px)').matches) return;
+
+                    const cursor = document.querySelector('.custom-cursor');
+                    const cursorDot = document.querySelector('.cursor-dot');
+
+                    if (!cursor || !cursorDot) return;
+
+                    document.body.classList.add('custom-cursor-active');
+
+                    let mouseX = 0;
+                    let mouseY = 0;
+                    let cursorX = 0;
+                    let cursorY = 0;
+
+                    document.addEventListener('mousemove', (e) => {
+                        mouseX = e.clientX;
+                        mouseY = e.clientY;
+
+                        // Immediate update for dot
+                        cursorDot.style.left = mouseX + 'px';
+                        cursorDot.style.top = mouseY + 'px';
+                    });
+
+                    // Smooth cursor ring follow
+                    const animateCursor = () => {
+                        cursorX += (mouseX - cursorX) * 0.15;
+                        cursorY += (mouseY - cursorY) * 0.15;
+
+                        cursor.style.left = cursorX + 'px';
+                        cursor.style.top = cursorY + 'px';
+
+                        requestAnimationFrame(animateCursor);
+                    };
+                    animateCursor();
+
+                    // Cursor states for interactive elements
+                    const interactiveElements = document.querySelectorAll('a, button, [role="button"], .donor-card, .filter-tag, .message-card');
+                    interactiveElements.forEach(el => {
+                        el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
+                        el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+                    });
+
+                    // Cursor click effect
+                    document.addEventListener('mousedown', () => cursor.classList.add('cursor-click'));
+                    document.addEventListener('mouseup', () => cursor.classList.remove('cursor-click'));
+
+                    // Hide cursor on text inputs
+                    const textInputs = document.querySelectorAll('input, textarea');
+                    textInputs.forEach(el => {
+                        el.addEventListener('mouseenter', () => cursor.classList.add('cursor-text'));
+                        el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-text'));
+                    });
+                },
+                init3DCardTilt() {
+                    const cards = document.querySelectorAll('.card-3d');
+
+                    cards.forEach(card => {
+                        const shine = card.querySelector('.card-3d-shine');
+
+                        card.addEventListener('mousemove', (e) => {
+                            const rect = card.getBoundingClientRect();
+                            const x = e.clientX - rect.left;
+                            const y = e.clientY - rect.top;
+
+                            const centerX = rect.width / 2;
+                            const centerY = rect.height / 2;
+
+                            const rotateX = (y - centerY) / 15;
+                            const rotateY = (centerX - x) / 15;
+
+                            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+
+                            // Update shine position
+                            if (shine) {
+                                shine.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.3) 0%, transparent 80%)`;
+                            }
+                        });
+
+                        card.addEventListener('mouseleave', () => {
+                            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+                        });
+                    });
+                },
+                initBackToTop() {
+                    const backToTop = document.querySelector('.back-to-top');
+                    if (!backToTop) return;
+
+                    window.addEventListener('scroll', () => {
+                        if (window.scrollY > 300) {
+                            backToTop.classList.add('visible');
+                        } else {
+                            backToTop.classList.remove('visible');
+                        }
+                    });
+                },
+                initCountUp() {
+                    const countUpElements = document.querySelectorAll('[data-countup]');
+
+                    const animateCountUp = (el) => {
+                        const target = parseInt(el.getAttribute('data-target')) || 0;
+                        const duration = 2000;
+                        const startTime = performance.now();
+
+                        const updateCount = (currentTime) => {
+                            const elapsed = currentTime - startTime;
+                            const progress = Math.min(elapsed / duration, 1);
+
+                            // Easing function
+                            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                            const current = Math.floor(easeOutQuart * target);
+
+                            el.textContent = current.toLocaleString();
+
+                            if (progress < 1) {
+                                requestAnimationFrame(updateCount);
+                            }
+                        };
+
+                        requestAnimationFrame(updateCount);
+                    };
+
+                    // Use Intersection Observer to trigger animation
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                animateCountUp(entry.target);
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.5 });
+
+                    countUpElements.forEach(el => observer.observe(el));
+                }
+            },
+            watch: {
+                activeTier() {
+                    // Reset display limit when filter changes
+                    this.displayLimit = 9;
+                },
+                searchQuery() {
+                    // Reset display limit when search changes
+                    this.displayLimit = 9;
+                }
+            },
+            mounted() {
+                // Initialize GSAP Animations
+                if (typeof GSAPAnimations !== 'undefined') {
+                    GSAPAnimations.init();
+                }
+
+                // Initialize Custom Cursor
+                this.initCustomCursor();
+
+                // Initialize 3D Card Tilt Effects
+                this.init3DCardTilt();
+
+                // Initialize Back to Top
+                this.initBackToTop();
+
+                // Initialize CountUp
+                this.initCountUp();
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

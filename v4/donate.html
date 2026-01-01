@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-gsap-manual>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>線上捐款 | 臺北市立大學募款平台</title>
+    <meta name="description" content="支持臺北市立大學，您的每一份捐款都將化為學生追夢的力量。安全加密、可抵稅捐款。">
+    <meta name="keywords" content="臺北市立大學,募款,捐款,教育,獎學金,體育培訓">
+    <meta name="author" content="臺北市立大學">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://utaipei-fundraising.zeabur.app/v4/donate.html">
+    <meta property="og:title" content="線上捐款 | 臺北市立大學募款平台">
+    <meta property="og:description" content="點亮未來，育才興邦。立即捐款支持教育發展。">
+    <meta property="og:image" content="images/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="線上捐款 | 臺北市立大學募款平台">
+    <meta name="twitter:description" content="支持優質教育發展，培育未來人才。">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://utaipei-fundraising.zeabur.app/v4/donate.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark': '#0a1628',
+                        'primary': '#1e3a5f',
+                        'secondary': '#162d4a',
+                        'card': '#1a3352',
+                        'gold': '#d4a84b',
+                        'gold-light': '#e8c87a',
+                    },
+                    fontFamily: {
+                        'sans': ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Aurora CSS -->
+    <link rel="stylesheet" href="css/aurora.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- GSAP CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="bg-dark text-white font-sans">
+    <!-- Aurora Background Layer (Fixed) -->
+    <div class="aurora-container">
+        <div class="aurora-layer aurora-layer-1"></div>
+        <div class="aurora-layer aurora-layer-2"></div>
+        <div class="aurora-layer aurora-layer-3"></div>
+        <div class="aurora-overlay"></div>
+        <div class="aurora-stars"></div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor"></div>
+    <div class="cursor-dot"></div>
+
+    <!-- Page Transition Layer -->
+    <div class="page-transition-layer"></div>
+
+    <!-- Vue App Container -->
+    <div id="app" class="starry-bg min-h-screen relative z-10">
+        <!-- Demo Ribbon -->
+        <div class="demo-ribbon">
+            <span>📋 計中展示版</span>
+        </div>
+
+        <!-- Shooting Stars -->
+        <div class="shooting-stars">
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+        </div>
+
+        <!-- Header -->
+        <header class="header-glass fixed top-0 left-0 right-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 md:h-20">
+                    <!-- Logo -->
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img :src="schoolInfo.logo" alt="校徽" class="h-10 w-10 rounded-full object-cover border-2 border-gold/30">
+                        <div class="hidden sm:block">
+                            <div class="text-lg font-bold text-gold">{{ schoolInfo.name }}</div>
+                            <div class="text-xs text-gray-400">募款平台</div>
+                        </div>
+                    </a>
+
+                    <!-- Navigation -->
+                    <nav class="hidden md:flex items-center gap-8">
+                        <a href="index.html" class="nav-link">首頁</a>
+                        <a href="projects.html" class="nav-link">專案總覽</a>
+                        <a href="about.html" class="nav-link">關於我們</a>
+                        <a href="honor.html" class="nav-link">芳名錄</a>
+                    </nav>
+
+                    <!-- CTA Button -->
+                    <a href="donate.html" class="btn-gold btn-magnetic ripple text-sm md:text-base active" data-gsap="magnetic">
+                        立即捐款
+                    </a>
+
+                    <!-- Mobile Menu Button -->
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 text-gray-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu -->
+                <div v-show="mobileMenuOpen" class="md:hidden py-4 border-t border-white/10">
+                    <nav class="flex flex-col gap-4">
+                        <a href="index.html" class="text-gray-300 hover:text-gold">首頁</a>
+                        <a href="projects.html" class="text-gray-300 hover:text-gold">專案總覽</a>
+                        <a href="about.html" class="text-gray-300 hover:text-gold">關於我們</a>
+                        <a href="honor.html" class="text-gray-300 hover:text-gold">芳名錄</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Header -->
+        <section class="pt-28 pb-8 relative z-10">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 gradient-text gsap-reveal" data-gsap="text-reveal">
+                    支持教育，點亮未來
+                </h1>
+                <p class="text-gray-400 max-w-2xl mx-auto mb-6 gsap-reveal" data-gsap="reveal" data-gsap-delay="0.1">
+                    您的每一份支持，都是照亮學子夢想的明燈
+                </p>
+                <!-- Trust Badges -->
+                <div class="flex justify-center gap-4 flex-wrap gsap-stagger" data-gsap="stagger">
+                    <span class="trust-badge security">
+                        🔒 SSL 安全加密
+                    </span>
+                    <span class="trust-badge">
+                        ✓ 可抵稅捐款
+                    </span>
+                    <span class="trust-badge">
+                        📄 開立正式收據
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step Indicator -->
+        <section class="py-6 relative z-10">
+            <div class="max-w-4xl mx-auto px-4">
+                <div class="step-indicator gsap-stagger" data-gsap="stagger">
+                    <div class="step-item">
+                        <div :class="['step-circle card-3d-mini', { 'active': currentStep === 1, 'completed': currentStep > 1 }]">
+                            <span v-if="currentStep <= 1">1</span>
+                            <span v-else>✓</span>
+                        </div>
+                        <span class="hidden sm:block ml-2 text-sm" :class="currentStep >= 1 ? 'text-gold' : 'text-gray-500'">選擇方案</span>
+                    </div>
+                    <div :class="['step-line', { 'active': currentStep > 1 }]"></div>
+                    <div class="step-item">
+                        <div :class="['step-circle card-3d-mini', { 'active': currentStep === 2, 'completed': currentStep > 2 }]">
+                            <span v-if="currentStep <= 2">2</span>
+                            <span v-else>✓</span>
+                        </div>
+                        <span class="hidden sm:block ml-2 text-sm" :class="currentStep >= 2 ? 'text-gold' : 'text-gray-500'">填寫資料</span>
+                    </div>
+                    <div :class="['step-line', { 'active': currentStep > 2 }]"></div>
+                    <div class="step-item">
+                        <div :class="['step-circle card-3d-mini', { 'active': currentStep === 3, 'completed': currentStep > 3 }]">
+                            <span v-if="currentStep <= 3">3</span>
+                            <span v-else>✓</span>
+                        </div>
+                        <span class="hidden sm:block ml-2 text-sm" :class="currentStep >= 3 ? 'text-gold' : 'text-gray-500'">確認捐款</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 1: Select Project & Amount -->
+        <section v-show="currentStep === 1" class="py-8 relative z-10 step-content">
+            <div class="max-w-4xl mx-auto px-4">
+                <!-- Project Selection -->
+                <div class="glass-card glass-enhanced p-6 md:p-8 mb-8" data-gsap="card">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <span class="text-2xl">🎯</span> 選擇捐款專案
+                    </h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div
+                            v-for="project in projects"
+                            :key="project.id"
+                            @click="selectProject(project.id)"
+                            :class="['payment-option card-3d cursor-pointer', { 'selected': selectedProject === project.id }]"
+                        >
+                            <div class="card-3d-inner">
+                                <div class="payment-icon">{{ project.icon }}</div>
+                                <div class="flex-1">
+                                    <div class="font-medium">{{ project.name }}</div>
+                                    <div class="text-sm text-gray-400">{{ project.description }}</div>
+                                    <div class="mt-2">
+                                        <div class="progress-bar-container h-1.5">
+                                            <div class="progress-bar-fill" :style="{ width: utils.calcProgress(project.raised, project.goal) + '%' }"></div>
+                                        </div>
+                                        <div class="text-xs text-gray-500 mt-1">
+                                            已募得 {{ utils.calcProgress(project.raised, project.goal) }}%
+                                        </div>
+                                    </div>
+                                </div>
+                                <div v-if="selectedProject === project.id" class="text-gold text-xl">✓</div>
+                            </div>
+                            <div class="card-3d-shine"></div>
+                        </div>
+                        <!-- Flexible Donation Option -->
+                        <div
+                            @click="selectProject('flexible')"
+                            :class="['payment-option card-3d cursor-pointer', { 'selected': selectedProject === 'flexible' }]"
+                        >
+                            <div class="card-3d-inner">
+                                <div class="payment-icon">💝</div>
+                                <div class="flex-1">
+                                    <div class="font-medium">不指定用途</div>
+                                    <div class="text-sm text-gray-400">由學校統籌運用於最需要的項目</div>
+                                </div>
+                                <div v-if="selectedProject === 'flexible'" class="text-gold text-xl">✓</div>
+                            </div>
+                            <div class="card-3d-shine"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Amount Selection -->
+                <div class="glass-card glass-enhanced p-6 md:p-8 mb-8" data-gsap="card">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <span class="text-2xl">💰</span> 選擇捐款金額
+                    </h2>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                        <button
+                            v-for="item in donationAmounts"
+                            :key="item.amount"
+                            @click="selectAmount(item.amount)"
+                            :class="['amount-btn card-3d text-left ripple', { 'active': selectedAmount === item.amount && !customAmountActive }]"
+                        >
+                            <div class="card-3d-inner">
+                                <div>NT$ {{ utils.formatNumber(item.amount) }}</div>
+                                <span class="amount-impact">{{ item.impact }}</span>
+                            </div>
+                            <div class="card-3d-shine"></div>
+                        </button>
+                    </div>
+                    <!-- Custom Amount -->
+                    <div class="form-group">
+                        <label class="form-label">自訂金額</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">NT$</span>
+                            <input
+                                type="number"
+                                v-model="customAmount"
+                                @focus="customAmountActive = true"
+                                @input="onCustomAmountInput"
+                                class="form-input pl-16"
+                                placeholder="請輸入金額"
+                                min="100"
+                            >
+                        </div>
+                        <p v-if="customAmountError" class="text-red-400 text-sm mt-2">{{ customAmountError }}</p>
+                        <p class="text-gray-500 text-sm mt-2">最低捐款金額為 NT$ 100</p>
+                    </div>
+                </div>
+
+                <!-- Donation Type -->
+                <div class="glass-card glass-enhanced p-6 md:p-8 mb-8" data-gsap="card">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <span class="text-2xl">🔄</span> 捐款方式
+                    </h2>
+                    <div class="flex gap-4">
+                        <button
+                            @click="donationType = 'single'"
+                            :class="['flex-1 py-4 rounded-xl border-2 transition-all card-3d', donationType === 'single' ? 'border-gold bg-gold/10 text-gold' : 'border-gray-600 text-gray-400']"
+                        >
+                            <div class="card-3d-inner text-center">
+                                <div class="text-2xl mb-2">💵</div>
+                                <div class="font-medium">單次捐款</div>
+                            </div>
+                        </button>
+                        <button
+                            @click="donationType = 'monthly'"
+                            :class="['flex-1 py-4 rounded-xl border-2 transition-all card-3d', donationType === 'monthly' ? 'border-gold bg-gold/10 text-gold' : 'border-gray-600 text-gray-400']"
+                        >
+                            <div class="card-3d-inner text-center">
+                                <div class="text-2xl mb-2">📅</div>
+                                <div class="font-medium">每月定期捐款</div>
+                            </div>
+                        </button>
+                    </div>
+                    <p v-if="donationType === 'monthly'" class="text-gray-400 text-sm mt-4">
+                        定期捐款將於每月 15 日自動扣款，您可隨時取消。
+                    </p>
+                </div>
+
+                <!-- Step 1 Navigation -->
+                <div class="flex justify-end">
+                    <button
+                        @click="nextStep"
+                        :disabled="!canProceedStep1"
+                        :class="['btn-gold btn-magnetic ripple px-8 py-4 text-lg', { 'opacity-50 cursor-not-allowed': !canProceedStep1 }]"
+                        data-gsap="magnetic"
+                    >
+                        下一步：填寫資料 →
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 2: Donor Information -->
+        <section v-show="currentStep === 2" class="py-8 relative z-10 step-content">
+            <div class="max-w-4xl mx-auto px-4">
+                <!-- Summary Card -->
+                <div class="glass-card glass-enhanced p-6 mb-8 border-gold/30" data-gsap="card">
+                    <div class="flex items-center justify-between flex-wrap gap-4">
+                        <div>
+                            <span class="text-gray-400">捐款專案：</span>
+                            <span class="text-gold font-medium">{{ getProjectName() }}</span>
+                        </div>
+                        <div>
+                            <span class="text-gray-400">捐款金額：</span>
+                            <span class="text-gold font-bold text-xl">{{ utils.formatCurrency(getFinalAmount()) }}</span>
+                            <span v-if="donationType === 'monthly'" class="text-gray-400 text-sm"> / 月</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Information -->
+                <div class="glass-card glass-enhanced p-6 md:p-8 mb-8" data-gsap="card">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <span class="text-2xl">👤</span> 捐款人資訊
+                    </h2>
+
+                    <!-- Donor Type -->
+                    <div class="flex gap-4 mb-6">
+                        <button
+                            @click="donorType = 'personal'"
+                            :class="['flex-1 py-3 rounded-lg border-2 transition-all', donorType === 'personal' ? 'border-gold bg-gold/10 text-gold' : 'border-gray-600 text-gray-400']"
+                        >
+                            個人捐款
+                        </button>
+                        <button
+                            @click="donorType = 'corporate'"
+                            :class="['flex-1 py-3 rounded-lg border-2 transition-all', donorType === 'corporate' ? 'border-gold bg-gold/10 text-gold' : 'border-gray-600 text-gray-400']"
+                        >
+                            企業 / 團體捐款
+                        </button>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Name -->
+                        <div class="form-group relative">
+                            <label class="form-label">
+                                {{ donorType === 'corporate' ? '公司 / 團體名稱' : '姓名' }}
+                                <span class="text-red-400">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                v-model="form.name"
+                                @blur="validateField('name')"
+                                :class="['form-input', formErrors.name ? 'invalid' : (form.name && !formErrors.name ? 'valid' : '')]"
+                                :placeholder="donorType === 'corporate' ? '請輸入公司或團體全名' : '請輸入真實姓名'"
+                            >
+                            <p v-if="formErrors.name" class="text-red-400 text-sm mt-1">{{ formErrors.name }}</p>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group relative">
+                            <label class="form-label">
+                                電子郵件
+                                <span class="text-red-400">*</span>
+                            </label>
+                            <input
+                                type="email"
+                                v-model="form.email"
+                                @blur="validateField('email')"
+                                :class="['form-input', formErrors.email ? 'invalid' : (form.email && !formErrors.email ? 'valid' : '')]"
+                                placeholder="example@email.com"
+                            >
+                            <p v-if="formErrors.email" class="text-red-400 text-sm mt-1">{{ formErrors.email }}</p>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="form-group relative">
+                            <label class="form-label">
+                                聯絡電話
+                                <span class="text-red-400">*</span>
+                            </label>
+                            <input
+                                type="tel"
+                                v-model="form.phone"
+                                @blur="validateField('phone')"
+                                :class="['form-input', formErrors.phone ? 'invalid' : (form.phone && !formErrors.phone ? 'valid' : '')]"
+                                placeholder="0912-345-678"
+                            >
+                            <p v-if="formErrors.phone" class="text-red-400 text-sm mt-1">{{ formErrors.phone }}</p>
+                        </div>
+
+                        <!-- ID Number (for tax receipt) -->
+                        <div class="form-group relative">
+                            <label class="form-label">
+                                {{ donorType === 'corporate' ? '統一編號' : '身分證字號' }}
+                                <span class="text-gray-500 text-xs">（收據開立用）</span>
+                            </label>
+                            <input
+                                type="text"
+                                v-model="form.idNumber"
+                                @blur="validateField('idNumber')"
+                                :class="['form-input', formErrors.idNumber ? 'invalid' : (form.idNumber && !formErrors.idNumber ? 'valid' : '')]"
+                                :placeholder="donorType === 'corporate' ? '請輸入 8 碼統一編號' : '請輸入身分證字號'"
+                            >
+                            <p v-if="formErrors.idNumber" class="text-red-400 text-sm mt-1">{{ formErrors.idNumber }}</p>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="form-group md:col-span-2 relative">
+                            <label class="form-label">
+                                收據寄送地址
+                                <span class="text-gray-500 text-xs">（郵寄實體收據時使用）</span>
+                            </label>
+                            <input
+                                type="text"
+                                v-model="form.address"
+                                class="form-input"
+                                placeholder="請輸入完整地址"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Anonymous Option -->
+                    <div class="mt-6">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                v-model="form.isAnonymous"
+                                class="w-5 h-5 rounded border-gray-600 bg-card text-gold focus:ring-gold"
+                            >
+                            <span class="text-gray-300">我希望匿名捐款（芳名錄顯示為「善心人士」）</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Receipt Options -->
+                <div class="glass-card glass-enhanced p-6 md:p-8 mb-8" data-gsap="card">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <span class="text-2xl">📄</span> 捐款收據
+                    </h2>
+                    <div class="space-y-4">
+                        <label class="flex items-start gap-3 cursor-pointer p-4 rounded-xl border border-gray-700 hover:border-gold/50 transition-all"
+                               :class="{ 'border-gold bg-gold/5': receiptType === 'email' }">
+                            <input
+                                type="radio"
+                                v-model="receiptType"
+                                value="email"
+                                class="mt-1 w-5 h-5 text-gold focus:ring-gold"
+                            >
+                            <div>
+                                <div class="font-medium">電子收據</div>
+                                <div class="text-sm text-gray-400">寄送至您的電子郵件信箱（環保快速）</div>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer p-4 rounded-xl border border-gray-700 hover:border-gold/50 transition-all"
+                               :class="{ 'border-gold bg-gold/5': receiptType === 'mail' }">
+                            <input
+                                type="radio"
+                                v-model="receiptType"
+                                value="mail"
+                                class="mt-1 w-5 h-5 text-gold focus:ring-gold"
+                            >
+                            <div>
+                                <div class="font-medium">紙本收據</div>
+                                <div class="text-sm text-gray-400">郵寄至您填寫的地址（約 7-14 個工作天）</div>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer p-4 rounded-xl border border-gray-700 hover:border-gold/50 transition-all"
+                               :class="{ 'border-gold bg-gold/5': receiptType === 'yearly' }">
+                            <input
+                                type="radio"
+                                v-model="receiptType"
+                                value="yearly"
+                                class="mt-1 w-5 h-5 text-gold focus:ring-gold"
+                            >
+                            <div>
+                                <div class="font-medium">年度彙總收據</div>
+                                <div class="text-sm text-gray-400">於隔年一月統一寄發全年度捐款收據</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="glass-card glass-enhanced p-6 md:p-8 mb-8" data-gsap="card">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <span class="text-2xl">💳</span> 付款方式
+                    </h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div
+                            v-for="method in paymentMethods"
+                            :key="method.id"
+                            @click="selectedPayment = method.id"
+                            :class="['payment-option card-3d cursor-pointer', { 'selected': selectedPayment === method.id }]"
+                        >
+                            <div class="card-3d-inner">
+                                <div class="payment-icon">{{ method.icon }}</div>
+                                <div class="flex-1">
+                                    <div class="font-medium">{{ method.name }}</div>
+                                    <div class="text-sm text-gray-400">{{ method.description }}</div>
+                                </div>
+                                <div v-if="selectedPayment === method.id" class="text-gold text-xl">✓</div>
+                            </div>
+                            <div class="card-3d-shine"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 Navigation -->
+                <div class="flex justify-between gap-4">
+                    <button
+                        @click="prevStep"
+                        class="btn-outline px-8 py-4"
+                    >
+                        ← 上一步
+                    </button>
+                    <button
+                        @click="nextStep"
+                        :disabled="!canProceedStep2"
+                        :class="['btn-gold btn-magnetic ripple px-8 py-4 text-lg', { 'opacity-50 cursor-not-allowed': !canProceedStep2 }]"
+                        data-gsap="magnetic"
+                    >
+                        下一步：確認捐款 →
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Step 3: Confirmation -->
+        <section v-show="currentStep === 3" class="py-8 relative z-10 step-content">
+            <div class="max-w-4xl mx-auto px-4">
+                <!-- Confirmation Summary -->
+                <div class="glass-card glass-enhanced p-6 md:p-8 mb-8" data-gsap="card">
+                    <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+                        <span class="text-2xl">📋</span> 捐款資訊確認
+                    </h2>
+
+                    <div class="space-y-6">
+                        <!-- Donation Info -->
+                        <div class="bg-card/50 rounded-xl p-6">
+                            <h3 class="font-medium text-gold mb-4">捐款內容</h3>
+                            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">捐款專案</span>
+                                    <span>{{ getProjectName() }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">捐款金額</span>
+                                    <span class="text-gold font-bold">{{ utils.formatCurrency(getFinalAmount()) }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">捐款方式</span>
+                                    <span>{{ donationType === 'monthly' ? '每月定期捐款' : '單次捐款' }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">付款方式</span>
+                                    <span>{{ getPaymentName() }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Donor Info -->
+                        <div class="bg-card/50 rounded-xl p-6">
+                            <h3 class="font-medium text-gold mb-4">捐款人資訊</h3>
+                            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">{{ donorType === 'corporate' ? '公司名稱' : '姓名' }}</span>
+                                    <span>{{ form.isAnonymous ? '匿名捐款' : form.name }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">電子郵件</span>
+                                    <span>{{ form.email }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">聯絡電話</span>
+                                    <span>{{ form.phone }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">收據形式</span>
+                                    <span>{{ getReceiptTypeName() }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Message (Optional) -->
+                        <div class="form-group">
+                            <label class="form-label">留言鼓勵（選填）</label>
+                            <textarea
+                                v-model="form.message"
+                                class="form-input resize-none"
+                                rows="3"
+                                placeholder="您的鼓勵將成為學生們前進的動力..."
+                            ></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms Agreement -->
+                <div class="glass-card glass-enhanced p-6 mb-8" data-gsap="card">
+                    <label class="flex items-start gap-3 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            v-model="agreeTerms"
+                            class="mt-1 w-5 h-5 rounded border-gray-600 bg-card text-gold focus:ring-gold"
+                        >
+                        <span class="text-gray-300 text-sm">
+                            我已閱讀並同意
+                            <a href="#" class="text-gold hover:underline">捐款須知</a>
+                            及
+                            <a href="#" class="text-gold hover:underline">隱私權政策</a>
+                            ，並確認以上資訊正確無誤。
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Final Amount Display -->
+                <div class="glass-card glass-enhanced p-6 mb-8 border-2 border-gold/50 text-center card-3d" data-gsap="card">
+                    <div class="card-3d-inner">
+                        <div class="text-gray-400 mb-2">您即將捐款</div>
+                        <div class="text-4xl md:text-5xl font-bold text-gold mb-2 animate-pulse-glow">
+                            {{ utils.formatCurrency(getFinalAmount()) }}
+                        </div>
+                        <div v-if="donationType === 'monthly'" class="text-gray-400">每月定期捐款</div>
+                        <div class="text-sm text-gray-500 mt-4">
+                            🔒 所有交易皆經 SSL 加密保護
+                        </div>
+                    </div>
+                    <div class="card-3d-shine"></div>
+                </div>
+
+                <!-- Step 3 Navigation -->
+                <div class="flex justify-between gap-4">
+                    <button
+                        @click="prevStep"
+                        class="btn-outline px-8 py-4"
+                    >
+                        ← 上一步
+                    </button>
+                    <button
+                        @click="submitDonation"
+                        :disabled="!agreeTerms || isSubmitting"
+                        :class="['btn-gold btn-magnetic ripple px-12 py-4 text-lg', { 'opacity-50 cursor-not-allowed': !agreeTerms || isSubmitting }]"
+                        data-gsap="magnetic"
+                    >
+                        <span v-if="isSubmitting">處理中...</span>
+                        <span v-else>確認捐款 💝</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Success Modal with Fireworks -->
+        <div v-if="showSuccessModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
+            <div class="glass-card glass-enhanced max-w-md w-full p-8 text-center animate-scale-in">
+                <div class="text-6xl mb-4">🎉</div>
+                <h2 class="text-2xl font-bold text-gold mb-4">感謝您的捐款！</h2>
+                <p class="text-gray-300 mb-6">
+                    您的愛心將化為學生們追夢的力量。<br>
+                    捐款確認信已寄送至您的信箱。
+                </p>
+                <div class="bg-card/50 rounded-xl p-4 mb-6">
+                    <div class="text-sm text-gray-400 mb-1">捐款編號</div>
+                    <div class="text-gold font-mono text-lg">{{ donationId }}</div>
+                </div>
+
+                <!-- Social Share Buttons -->
+                <div class="mb-6">
+                    <p class="text-sm text-gray-400 mb-3">分享您的愛心</p>
+                    <div class="flex justify-center gap-3">
+                        <button @click="shareDonation('facebook')" class="share-btn-mini facebook">
+                            📘
+                        </button>
+                        <button @click="shareDonation('line')" class="share-btn-mini line">
+                            💬
+                        </button>
+                        <button @click="shareDonation('twitter')" class="share-btn-mini twitter">
+                            🐦
+                        </button>
+                        <button @click="copyShareLink" class="share-btn-mini copy">
+                            🔗
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="index.html" class="btn-outline flex-1">返回首頁</a>
+                    <a href="projects.html" class="btn-gold flex-1 ripple">瀏覽其他專案</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer relative z-10 mt-16">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="grid md:grid-cols-4 gap-8 mb-8">
+                    <!-- Logo & Info -->
+                    <div class="md:col-span-2">
+                        <div class="flex items-center gap-3 mb-4">
+                            <img :src="schoolInfo.logo" alt="校徽" class="h-12 w-12 rounded-full object-cover">
+                            <div>
+                                <div class="text-lg font-bold text-gold">{{ schoolInfo.name }}</div>
+                                <div class="text-sm text-gray-400">{{ schoolInfo.nameEn }}</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4">
+                            {{ schoolInfo.contact.address }}<br>
+                            電話：{{ schoolInfo.contact.phone }}<br>
+                            Email：{{ schoolInfo.contact.email }}
+                        </p>
+                        <div class="flex gap-4">
+                            <a :href="schoolInfo.social.facebook" target="_blank" class="text-gray-400 hover:text-gold text-xl">📘</a>
+                            <a :href="schoolInfo.social.instagram" target="_blank" class="text-gray-400 hover:text-gold text-xl">📷</a>
+                            <a :href="schoolInfo.social.youtube" target="_blank" class="text-gray-400 hover:text-gold text-xl">📺</a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h4 class="font-bold mb-4">快速連結</h4>
+                        <nav class="flex flex-col gap-2">
+                            <a href="projects.html" class="footer-link">專案總覽</a>
+                            <a href="donate.html" class="footer-link">線上捐款</a>
+                            <a href="honor.html" class="footer-link">芳名錄</a>
+                            <a href="about.html" class="footer-link">關於我們</a>
+                        </nav>
+                    </div>
+
+                    <!-- Legal -->
+                    <div>
+                        <h4 class="font-bold mb-4">捐款須知</h4>
+                        <nav class="flex flex-col gap-2">
+                            <a href="#" class="footer-link">隱私權政策</a>
+                            <a href="#" class="footer-link">捐款須知</a>
+                            <a href="#" class="footer-link">常見問題</a>
+                            <a href="#" class="footer-link">聯絡我們</a>
+                        </nav>
+                    </div>
+                </div>
+
+                <div class="border-t border-white/10 pt-6 text-center text-sm text-gray-500">
+                    <p>© 2025 {{ schoolInfo.name }}. All Rights Reserved.</p>
+                    <p class="mt-2">本網站為展示用途，實際捐款請至學校官方管道</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Back to Top Button -->
+        <button class="back-to-top" aria-label="返回頂端">
+            ↑
+        </button>
+    </div>
+
+    <!-- Fireworks Canvas -->
+    <canvas id="fireworks-canvas"></canvas>
+
+    <!-- Shared JS (Data & Utilities) -->
+    <script src="js/app.js"></script>
+
+    <!-- GSAP Animations Module -->
+    <script src="js/gsap-animations.js"></script>
+
+    <!-- Three.js Effects Module -->
+    <script src="js/three-effects.js"></script>
+
+    <!-- Page Vue App -->
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    schoolInfo: window.schoolInfo,
+                    projects: window.projectsData,
+                    paymentMethods: window.paymentMethods,
+                    donationAmounts: window.donationAmounts,
+                    utils: window.utils,
+                    mobileMenuOpen: false,
+
+                    // Step control
+                    currentStep: 1,
+
+                    // Step 1: Donation selection
+                    selectedProject: null,
+                    selectedAmount: null,
+                    customAmount: '',
+                    customAmountActive: false,
+                    customAmountError: '',
+                    donationType: 'single',
+
+                    // Step 2: Donor information
+                    donorType: 'personal',
+                    form: {
+                        name: '',
+                        email: '',
+                        phone: '',
+                        idNumber: '',
+                        address: '',
+                        isAnonymous: false,
+                        message: ''
+                    },
+                    formErrors: {},
+                    receiptType: 'email',
+                    selectedPayment: 'credit',
+
+                    // Step 3: Confirmation
+                    agreeTerms: false,
+                    isSubmitting: false,
+                    showSuccessModal: false,
+                    donationId: ''
+                }
+            },
+            computed: {
+                canProceedStep1() {
+                    const amount = this.getFinalAmount();
+                    return this.selectedProject && amount >= 100;
+                },
+                canProceedStep2() {
+                    return this.form.name &&
+                           this.form.email &&
+                           this.form.phone &&
+                           !this.formErrors.name &&
+                           !this.formErrors.email &&
+                           !this.formErrors.phone &&
+                           this.selectedPayment;
+                }
+            },
+            methods: {
+                selectProject(projectId) {
+                    this.selectedProject = projectId;
+                },
+                selectAmount(amount) {
+                    this.selectedAmount = amount;
+                    this.customAmount = '';
+                    this.customAmountActive = false;
+                    this.customAmountError = '';
+                },
+                onCustomAmountInput() {
+                    this.selectedAmount = null;
+                    this.customAmountActive = true;
+                    const value = parseInt(this.customAmount);
+                    if (value && value < 100) {
+                        this.customAmountError = '最低捐款金額為 NT$ 100';
+                    } else {
+                        this.customAmountError = '';
+                    }
+                },
+                getFinalAmount() {
+                    if (this.customAmountActive && this.customAmount) {
+                        return parseInt(this.customAmount) || 0;
+                    }
+                    return this.selectedAmount || 0;
+                },
+                getProjectName() {
+                    if (this.selectedProject === 'flexible') {
+                        return '不指定用途';
+                    }
+                    const project = this.projects.find(p => p.id === this.selectedProject);
+                    return project ? project.name : '';
+                },
+                getPaymentName() {
+                    const method = this.paymentMethods.find(m => m.id === this.selectedPayment);
+                    return method ? method.name : '';
+                },
+                getReceiptTypeName() {
+                    const types = {
+                        'email': '電子收據',
+                        'mail': '紙本收據',
+                        'yearly': '年度彙總收據'
+                    };
+                    return types[this.receiptType] || '';
+                },
+                validateField(field) {
+                    const value = this.form[field];
+
+                    if (field === 'name') {
+                        if (!value || value.trim().length < 2) {
+                            this.formErrors.name = '請輸入姓名（至少2個字）';
+                        } else {
+                            delete this.formErrors.name;
+                        }
+                    }
+
+                    if (field === 'email') {
+                        if (!value) {
+                            this.formErrors.email = '請輸入電子郵件';
+                        } else if (!this.utils.validateEmail(value)) {
+                            this.formErrors.email = '請輸入有效的電子郵件';
+                        } else {
+                            delete this.formErrors.email;
+                        }
+                    }
+
+                    if (field === 'phone') {
+                        if (!value) {
+                            this.formErrors.phone = '請輸入聯絡電話';
+                        } else if (!this.utils.validatePhone(value)) {
+                            this.formErrors.phone = '請輸入有效的電話號碼';
+                        } else {
+                            delete this.formErrors.phone;
+                        }
+                    }
+
+                    if (field === 'idNumber' && value) {
+                        if (this.donorType === 'personal') {
+                            if (!this.utils.validateTaiwanId(value)) {
+                                this.formErrors.idNumber = '請輸入有效的身分證字號';
+                            } else {
+                                delete this.formErrors.idNumber;
+                            }
+                        } else {
+                            // Simple check for corporate ID (8 digits)
+                            if (!/^\d{8}$/.test(value)) {
+                                this.formErrors.idNumber = '請輸入 8 碼統一編號';
+                            } else {
+                                delete this.formErrors.idNumber;
+                            }
+                        }
+                    }
+
+                    // Force reactivity
+                    this.formErrors = { ...this.formErrors };
+                },
+                nextStep() {
+                    if (this.currentStep === 1 && this.canProceedStep1) {
+                        this.currentStep = 2;
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else if (this.currentStep === 2 && this.canProceedStep2) {
+                        this.currentStep = 3;
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                },
+                prevStep() {
+                    if (this.currentStep > 1) {
+                        this.currentStep--;
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                },
+                async submitDonation() {
+                    if (!this.agreeTerms || this.isSubmitting) return;
+
+                    this.isSubmitting = true;
+
+                    // Simulate API call
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+
+                    // Generate donation ID
+                    this.donationId = 'UT' + Date.now().toString().slice(-8) + Math.random().toString(36).slice(-4).toUpperCase();
+
+                    // Save donation preferences
+                    if (window.donationPrefs) {
+                        window.donationPrefs.save({
+                            lastAmount: this.getFinalAmount(),
+                            lastProject: this.selectedProject,
+                            donorType: this.donorType
+                        });
+                    }
+
+                    this.isSubmitting = false;
+                    this.showSuccessModal = true;
+
+                    // Trigger Fireworks Effect!
+                    this.triggerDonationFireworks();
+
+                    if (window.toast) {
+                        window.toast.show('捐款成功！感謝您的愛心', 'success');
+                    }
+                },
+                triggerDonationFireworks() {
+                    // Trigger multiple fireworks for celebration
+                    if (typeof ThreeEffects !== 'undefined') {
+                        ThreeEffects.triggerFireworks(0, 0.2);
+                        setTimeout(() => ThreeEffects.triggerFireworks(-0.3, 0.1), 300);
+                        setTimeout(() => ThreeEffects.triggerFireworks(0.3, 0.15), 600);
+                        setTimeout(() => ThreeEffects.triggerFireworks(-0.15, 0.3), 900);
+                        setTimeout(() => ThreeEffects.triggerFireworks(0.2, 0.25), 1200);
+                    }
+                },
+                shareDonation(platform) {
+                    const text = `我剛剛捐款支持了${this.getProjectName()}！一起來支持臺北市立大學募款計畫吧！`;
+                    const url = window.location.origin + '/v4/donate.html';
+
+                    if (platform === 'facebook') {
+                        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`, '_blank');
+                    } else if (platform === 'line') {
+                        window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+                    } else if (platform === 'twitter') {
+                        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+                    }
+                },
+                copyShareLink() {
+                    const url = window.location.origin + '/v4/donate.html';
+                    navigator.clipboard.writeText(url).then(() => {
+                        if (window.toast) {
+                            window.toast.show('連結已複製到剪貼簿', 'success');
+                        }
+                    });
+                },
+                initFromUrl() {
+                    const params = new URLSearchParams(window.location.search);
+                    const projectId = params.get('project');
+                    const amount = params.get('amount');
+
+                    if (projectId) {
+                        const numId = parseInt(projectId);
+                        const project = this.projects.find(p => p.id === numId);
+                        if (project) {
+                            this.selectedProject = numId;
+                        }
+                    }
+
+                    if (amount) {
+                        const numAmount = parseInt(amount);
+                        if (numAmount >= 100) {
+                            const preset = this.donationAmounts.find(a => a.amount === numAmount);
+                            if (preset) {
+                                this.selectedAmount = numAmount;
+                            } else {
+                                this.customAmount = numAmount.toString();
+                                this.customAmountActive = true;
+                            }
+                        }
+                    }
+                },
+                initCustomCursor() {
+                    // Only on desktop
+                    if (window.matchMedia('(max-width: 768px)').matches) return;
+
+                    const cursor = document.querySelector('.custom-cursor');
+                    const cursorDot = document.querySelector('.cursor-dot');
+
+                    if (!cursor || !cursorDot) return;
+
+                    document.body.classList.add('custom-cursor-active');
+
+                    let mouseX = 0;
+                    let mouseY = 0;
+                    let cursorX = 0;
+                    let cursorY = 0;
+
+                    document.addEventListener('mousemove', (e) => {
+                        mouseX = e.clientX;
+                        mouseY = e.clientY;
+
+                        // Immediate update for dot
+                        cursorDot.style.left = mouseX + 'px';
+                        cursorDot.style.top = mouseY + 'px';
+                    });
+
+                    // Smooth cursor ring follow
+                    const animateCursor = () => {
+                        cursorX += (mouseX - cursorX) * 0.15;
+                        cursorY += (mouseY - cursorY) * 0.15;
+
+                        cursor.style.left = cursorX + 'px';
+                        cursor.style.top = cursorY + 'px';
+
+                        requestAnimationFrame(animateCursor);
+                    };
+                    animateCursor();
+
+                    // Cursor states for interactive elements
+                    const interactiveElements = document.querySelectorAll('a, button, [role="button"], .payment-option, .amount-btn, .card-3d');
+                    interactiveElements.forEach(el => {
+                        el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
+                        el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+                    });
+
+                    // Cursor click effect
+                    document.addEventListener('mousedown', () => cursor.classList.add('cursor-click'));
+                    document.addEventListener('mouseup', () => cursor.classList.remove('cursor-click'));
+
+                    // Hide cursor on text inputs
+                    const textInputs = document.querySelectorAll('input, textarea');
+                    textInputs.forEach(el => {
+                        el.addEventListener('mouseenter', () => cursor.classList.add('cursor-text'));
+                        el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-text'));
+                    });
+                },
+                init3DCardTilt() {
+                    const cards = document.querySelectorAll('.card-3d');
+
+                    cards.forEach(card => {
+                        const shine = card.querySelector('.card-3d-shine');
+
+                        card.addEventListener('mousemove', (e) => {
+                            const rect = card.getBoundingClientRect();
+                            const x = e.clientX - rect.left;
+                            const y = e.clientY - rect.top;
+
+                            const centerX = rect.width / 2;
+                            const centerY = rect.height / 2;
+
+                            const rotateX = (y - centerY) / 15;
+                            const rotateY = (centerX - x) / 15;
+
+                            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+
+                            // Update shine position
+                            if (shine) {
+                                shine.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.3) 0%, transparent 80%)`;
+                            }
+                        });
+
+                        card.addEventListener('mouseleave', () => {
+                            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+                        });
+                    });
+                }
+            },
+            mounted() {
+                this.initFromUrl();
+
+                // Load last preferences
+                if (window.donationPrefs) {
+                    const prefs = window.donationPrefs.load();
+                    if (prefs.lastProject && !this.selectedProject) {
+                        this.selectedProject = prefs.lastProject;
+                    }
+                }
+
+                // Initialize GSAP Animations
+                if (typeof GSAPAnimations !== 'undefined') {
+                    GSAPAnimations.init();
+                }
+
+                // Initialize Three.js Effects (for fireworks)
+                if (typeof ThreeEffects !== 'undefined') {
+                    // Create a container for Three.js
+                    const heroSection = document.querySelector('.step-content');
+                    if (heroSection) {
+                        const container = document.createElement('div');
+                        container.id = 'three-canvas';
+                        container.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100;';
+                        document.body.appendChild(container);
+                        ThreeEffects.init(container);
+                    }
+                }
+
+                // Initialize Custom Cursor
+                this.initCustomCursor();
+
+                // Initialize 3D Card Tilt Effects
+                this.$nextTick(() => {
+                    this.init3DCardTilt();
+                });
+            },
+            updated() {
+                // Re-initialize 3D effects when step changes
+                this.$nextTick(() => {
+                    this.init3DCardTilt();
+                });
+            }
+        }).mount('#app');
+    </script>
+
+    <!-- Additional Donate Page Styles -->
+    <style>
+        /* Step Indicator Enhanced */
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid var(--text-muted);
+            background: var(--bg-card);
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .step-circle.active {
+            border-color: var(--accent-gold);
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px rgba(212, 168, 75, 0.4);
+        }
+
+        .step-circle.completed {
+            border-color: var(--accent-green);
+            background: var(--accent-green);
+            color: white;
+        }
+
+        .step-line {
+            width: 60px;
+            height: 3px;
+            background: var(--text-muted);
+            margin: 0 10px;
+            border-radius: 2px;
+            transition: background 0.3s ease;
+        }
+
+        .step-line.active {
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-gold));
+        }
+
+        /* Step Content Transitions */
+        .step-content {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Payment Option Enhanced */
+        .payment-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(26, 51, 82, 0.5);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .payment-option:hover {
+            border-color: rgba(212, 168, 75, 0.5);
+            background: rgba(26, 51, 82, 0.7);
+        }
+
+        .payment-option.selected {
+            border-color: var(--accent-gold);
+            background: rgba(212, 168, 75, 0.1);
+        }
+
+        .payment-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        /* Amount Button Enhanced */
+        .amount-btn {
+            padding: 1rem;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(26, 51, 82, 0.5);
+            color: var(--text-primary);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .amount-btn:hover {
+            border-color: rgba(212, 168, 75, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .amount-btn.active {
+            border-color: var(--accent-gold);
+            background: linear-gradient(135deg, rgba(212, 168, 75, 0.2), rgba(232, 200, 122, 0.1));
+            color: var(--accent-gold);
+        }
+
+        .amount-impact {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: normal;
+            margin-top: 0.25rem;
+        }
+
+        /* Social Share Mini Buttons */
+        .share-btn-mini {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .share-btn-mini.facebook {
+            background: #1877f2;
+        }
+
+        .share-btn-mini.line {
+            background: #00b900;
+        }
+
+        .share-btn-mini.twitter {
+            background: #1da1f2;
+        }
+
+        .share-btn-mini.copy {
+            background: var(--accent-gold);
+        }
+
+        .share-btn-mini:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Card 3D Mini (for step circles) */
+        .card-3d-mini {
+            transition: transform 0.3s ease;
+        }
+
+        .card-3d-mini:hover {
+            transform: scale(1.1);
+        }
+
+        /* Form Input Enhanced */
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(26, 51, 82, 0.6);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(212, 168, 75, 0.2);
+        }
+
+        .form-input.valid {
+            border-color: var(--accent-green);
+        }
+
+        .form-input.invalid {
+            border-color: var(--accent-red);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* Checkbox and Radio Custom */
+        input[type="checkbox"],
+        input[type="radio"] {
+            accent-color: var(--accent-gold);
+        }
+
+        input[type="checkbox"]:checked,
+        input[type="radio"]:checked {
+            background-color: var(--accent-gold);
+            border-color: var(--accent-gold);
+        }
+
+        /* Number Input - Hide Spinners */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        /* Textarea */
+        textarea.form-input {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Focus visible for accessibility */
+        .payment-option:focus-visible,
+        .amount-btn:focus-visible,
+        button:focus-visible {
+            outline: 2px solid var(--accent-gold);
+            outline-offset: 2px;
+        }
+
+        /* Animate Scale In */
+        @keyframes scale-in {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .animate-scale-in {
+            animation: scale-in 0.4s ease-out;
+        }
+
+        /* Pulse Glow for Amount Display */
+        .animate-pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(212, 168, 75, 0.5);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(212, 168, 75, 0.8), 0 0 60px rgba(212, 168, 75, 0.4);
+            }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 640px) {
+            .step-line {
+                width: 30px;
+            }
+
+            .step-circle {
+                width: 36px;
+                height: 36px;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</body>
+</html>

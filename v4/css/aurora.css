@@ -1,0 +1,405 @@
+/* ============================================
+   AURORA BACKGROUND - V4 Pro Fundraising Platform
+   Multi-layer animated gradient background effect
+   ============================================ */
+
+/* --- CSS Variables for Aurora --- */
+:root {
+    /* Aurora Color Palette */
+    --aurora-dark: #0a1628;
+    --aurora-purple: #7877c6;
+    --aurora-cyan: #22c1c3;
+    --aurora-gold: #d4a84b;
+    --aurora-magenta: #a855f7;
+    --aurora-blue: #3b82f6;
+
+    /* Aurora Animation Timing */
+    --aurora-duration-1: 25s;
+    --aurora-duration-2: 35s;
+    --aurora-duration-3: 45s;
+    --aurora-blur-amount: 80px;
+}
+
+/* --- Aurora Container --- */
+.aurora-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    background: var(--aurora-dark);
+    pointer-events: none;
+}
+
+/* --- SVG Filter for Blur Effect --- */
+.aurora-filter {
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+/* --- Aurora Layer Base --- */
+.aurora-layer {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    opacity: 0.6;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* --- Aurora Layer 1 - Primary Purple/Cyan --- */
+.aurora-layer-1 {
+    background:
+        radial-gradient(
+            ellipse 80% 50% at 20% 30%,
+            var(--aurora-purple) 0%,
+            transparent 50%
+        ),
+        radial-gradient(
+            ellipse 60% 40% at 80% 70%,
+            var(--aurora-cyan) 0%,
+            transparent 45%
+        );
+    filter: blur(var(--aurora-blur-amount));
+    animation: aurora-shift-1 var(--aurora-duration-1) ease-in-out infinite;
+}
+
+/* --- Aurora Layer 2 - Secondary Gold/Magenta --- */
+.aurora-layer-2 {
+    background:
+        radial-gradient(
+            ellipse 70% 60% at 70% 20%,
+            var(--aurora-gold) 0%,
+            transparent 55%
+        ),
+        radial-gradient(
+            ellipse 50% 50% at 30% 80%,
+            var(--aurora-magenta) 0%,
+            transparent 50%
+        );
+    filter: blur(calc(var(--aurora-blur-amount) * 1.2));
+    animation: aurora-shift-2 var(--aurora-duration-2) ease-in-out infinite;
+    opacity: 0.4;
+}
+
+/* --- Aurora Layer 3 - Accent Blue/Cyan --- */
+.aurora-layer-3 {
+    background:
+        radial-gradient(
+            ellipse 90% 70% at 50% 50%,
+            var(--aurora-blue) 0%,
+            transparent 40%
+        ),
+        radial-gradient(
+            ellipse 40% 60% at 10% 50%,
+            var(--aurora-cyan) 0%,
+            transparent 45%
+        ),
+        radial-gradient(
+            ellipse 45% 45% at 90% 40%,
+            var(--aurora-gold) 0%,
+            transparent 50%
+        );
+    filter: blur(calc(var(--aurora-blur-amount) * 0.8));
+    animation: aurora-shift-3 var(--aurora-duration-3) ease-in-out infinite;
+    opacity: 0.35;
+}
+
+/* --- Aurora Shift Animation 1 --- */
+@keyframes aurora-shift-1 {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+    25% {
+        transform: translate(5%, -10%) rotate(5deg) scale(1.05);
+    }
+    50% {
+        transform: translate(-5%, 5%) rotate(-3deg) scale(0.95);
+    }
+    75% {
+        transform: translate(-10%, -5%) rotate(3deg) scale(1.02);
+    }
+}
+
+/* --- Aurora Shift Animation 2 --- */
+@keyframes aurora-shift-2 {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+    20% {
+        transform: translate(-8%, 5%) rotate(-4deg) scale(1.03);
+    }
+    40% {
+        transform: translate(10%, -8%) rotate(6deg) scale(0.97);
+    }
+    60% {
+        transform: translate(-5%, -10%) rotate(-2deg) scale(1.05);
+    }
+    80% {
+        transform: translate(8%, 8%) rotate(4deg) scale(0.98);
+    }
+}
+
+/* --- Aurora Shift Animation 3 --- */
+@keyframes aurora-shift-3 {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+    15% {
+        transform: translate(12%, -5%) rotate(3deg) scale(1.02);
+    }
+    35% {
+        transform: translate(-8%, 12%) rotate(-5deg) scale(0.96);
+    }
+    55% {
+        transform: translate(5%, -12%) rotate(4deg) scale(1.04);
+    }
+    75% {
+        transform: translate(-12%, 5%) rotate(-3deg) scale(0.98);
+    }
+}
+
+/* --- Aurora Intensity Variants --- */
+.aurora-container.aurora-subtle .aurora-layer {
+    opacity: 0.3;
+}
+
+.aurora-container.aurora-intense .aurora-layer {
+    opacity: 0.8;
+}
+
+.aurora-container.aurora-intense .aurora-layer-1 {
+    filter: blur(calc(var(--aurora-blur-amount) * 0.6));
+}
+
+/* --- Aurora Color Variants --- */
+.aurora-container.aurora-warm .aurora-layer-1 {
+    background:
+        radial-gradient(
+            ellipse 80% 50% at 20% 30%,
+            #ff6b6b 0%,
+            transparent 50%
+        ),
+        radial-gradient(
+            ellipse 60% 40% at 80% 70%,
+            var(--aurora-gold) 0%,
+            transparent 45%
+        );
+}
+
+.aurora-container.aurora-cool .aurora-layer-1 {
+    background:
+        radial-gradient(
+            ellipse 80% 50% at 20% 30%,
+            var(--aurora-blue) 0%,
+            transparent 50%
+        ),
+        radial-gradient(
+            ellipse 60% 40% at 80% 70%,
+            var(--aurora-cyan) 0%,
+            transparent 45%
+        );
+}
+
+/* --- Aurora Overlay for Content Readability --- */
+.aurora-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        180deg,
+        rgba(10, 22, 40, 0.3) 0%,
+        rgba(10, 22, 40, 0.5) 50%,
+        rgba(10, 22, 40, 0.7) 100%
+    );
+    pointer-events: none;
+}
+
+/* --- Aurora Noise Texture (Optional) --- */
+.aurora-noise {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none;
+}
+
+/* --- Aurora Glow Points --- */
+.aurora-glow-point {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.4;
+    animation: aurora-pulse 8s ease-in-out infinite;
+}
+
+.aurora-glow-point-1 {
+    top: 10%;
+    left: 20%;
+    background: var(--aurora-purple);
+    animation-delay: 0s;
+}
+
+.aurora-glow-point-2 {
+    top: 60%;
+    right: 15%;
+    background: var(--aurora-cyan);
+    animation-delay: 2.5s;
+}
+
+.aurora-glow-point-3 {
+    bottom: 20%;
+    left: 30%;
+    background: var(--aurora-gold);
+    animation-delay: 5s;
+}
+
+@keyframes aurora-pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.3;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 0.5;
+    }
+}
+
+/* --- Aurora Stars Integration --- */
+.aurora-stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.8), transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.6), transparent),
+        radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.9), transparent),
+        radial-gradient(2px 2px at 130px 80px, rgba(212, 168, 75, 0.8), transparent),
+        radial-gradient(1px 1px at 160px 120px, rgba(255, 255, 255, 0.7), transparent),
+        radial-gradient(2px 2px at 200px 50px, rgba(255, 255, 255, 0.5), transparent),
+        radial-gradient(1px 1px at 250px 90px, rgba(212, 168, 75, 0.6), transparent),
+        radial-gradient(2px 2px at 300px 150px, rgba(255, 255, 255, 0.8), transparent),
+        radial-gradient(1px 1px at 350px 30px, rgba(255, 255, 255, 0.6), transparent),
+        radial-gradient(2px 2px at 400px 100px, rgba(255, 255, 255, 0.7), transparent);
+    background-size: 450px 180px;
+    animation: aurora-stars-twinkle 6s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes aurora-stars-twinkle {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.8; }
+}
+
+/* --- Reduced Motion Accessibility --- */
+@media (prefers-reduced-motion: reduce) {
+    .aurora-layer-1,
+    .aurora-layer-2,
+    .aurora-layer-3,
+    .aurora-glow-point,
+    .aurora-stars {
+        animation: none !important;
+    }
+
+    /* Static fallback gradients */
+    .aurora-layer-1 {
+        background:
+            radial-gradient(
+                ellipse 100% 60% at 30% 40%,
+                rgba(120, 119, 198, 0.4) 0%,
+                transparent 60%
+            ),
+            radial-gradient(
+                ellipse 80% 50% at 70% 60%,
+                rgba(34, 193, 195, 0.3) 0%,
+                transparent 55%
+            );
+        opacity: 0.5;
+    }
+
+    .aurora-layer-2 {
+        background:
+            radial-gradient(
+                ellipse 90% 70% at 60% 30%,
+                rgba(212, 168, 75, 0.25) 0%,
+                transparent 50%
+            );
+        opacity: 0.3;
+    }
+
+    .aurora-layer-3 {
+        display: none;
+    }
+
+    .aurora-glow-point {
+        opacity: 0.25;
+    }
+
+    .aurora-stars {
+        opacity: 0.6;
+    }
+}
+
+/* --- Performance Optimizations --- */
+@media (max-width: 768px) {
+    .aurora-layer {
+        filter: blur(calc(var(--aurora-blur-amount) * 0.6));
+    }
+
+    .aurora-layer-3 {
+        display: none;
+    }
+
+    .aurora-glow-point {
+        width: 200px;
+        height: 200px;
+    }
+}
+
+/* --- High Contrast Mode --- */
+@media (prefers-contrast: high) {
+    .aurora-container {
+        background: #000;
+    }
+
+    .aurora-layer {
+        opacity: 0.2;
+    }
+
+    .aurora-overlay {
+        background: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.5) 0%,
+            rgba(0, 0, 0, 0.7) 100%
+        );
+    }
+}
+
+/* --- Dark Mode Enhancements --- */
+@media (prefers-color-scheme: dark) {
+    .aurora-container {
+        background: #050d18;
+    }
+}
+
+/* --- Print Styles --- */
+@media print {
+    .aurora-container {
+        display: none !important;
+    }
+}

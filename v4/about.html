@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-gsap-manual>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>關於我們 | 臺北市立大學募款平台</title>
+    <meta name="description" content="認識臺北市立大學，了解我們的歷史、願景與募款用途。支持教育發展，共創美好未來。">
+    <meta name="keywords" content="臺北市立大學,關於我們,學校歷史,募款用途,教育發展">
+    <meta name="author" content="臺北市立大學">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://utaipei-fundraising.zeabur.app/v4/about.html">
+    <meta property="og:title" content="關於我們 | 臺北市立大學募款平台">
+    <meta property="og:description" content="認識臺北市立大學，了解我們的歷史、願景與募款用途。">
+    <meta property="og:image" content="images/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="關於我們 | 臺北市立大學募款平台">
+    <meta name="twitter:description" content="認識臺北市立大學，了解我們的歷史、願景與募款用途。">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://utaipei-fundraising.zeabur.app/v4/about.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark': '#0a1628',
+                        'primary': '#1e3a5f',
+                        'secondary': '#162d4a',
+                        'card': '#1a3352',
+                        'gold': '#d4a84b',
+                        'gold-light': '#e8c87a',
+                    },
+                    fontFamily: {
+                        'sans': ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Aurora CSS -->
+    <link rel="stylesheet" href="css/aurora.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- GSAP CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- Page-specific Styles -->
+    <style>
+        /* Timeline Styles */
+        .timeline-section {
+            position: relative;
+            padding: 4rem 0;
+        }
+
+        .timeline-container {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Timeline center line */
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, var(--gold, #d4a84b), transparent);
+            transform: translateX(-50%);
+            transform-origin: top;
+        }
+
+        .timeline-line-progress {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, #d4a84b, #e8c87a);
+            transform: translateX(-50%);
+            transform-origin: top;
+            box-shadow: 0 0 10px rgba(212, 168, 75, 0.5);
+        }
+
+        /* Timeline item */
+        .timeline-item {
+            position: relative;
+            padding: 2rem 0;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .timeline-item.gsap-animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-right: calc(50% + 2rem);
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-left: calc(50% + 2rem);
+            text-align: left;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            top: 2rem;
+            width: 20px;
+            height: 20px;
+            background: #0a1628;
+            border: 3px solid #d4a84b;
+            border-radius: 50%;
+            transform: translateX(-50%) scale(0);
+            z-index: 10;
+            transition: transform 0.3s ease;
+        }
+
+        .timeline-item.gsap-animated .timeline-dot {
+            transform: translateX(-50%) scale(1);
+        }
+
+        .timeline-dot::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: #d4a84b;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .timeline-item:hover .timeline-dot::after {
+            opacity: 1;
+        }
+
+        .timeline-content {
+            background: rgba(26, 51, 82, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 168, 75, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            border-color: rgba(212, 168, 75, 0.5);
+            transform: scale(1.02);
+            box-shadow: 0 10px 40px rgba(212, 168, 75, 0.15);
+        }
+
+        .timeline-year {
+            display: inline-block;
+            background: linear-gradient(135deg, #d4a84b, #e8c87a);
+            color: #0a1628;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: bold;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Mobile Timeline */
+        @media (max-width: 768px) {
+            .timeline-line,
+            .timeline-line-progress {
+                left: 1rem;
+            }
+
+            .timeline-dot {
+                left: 1rem;
+            }
+
+            .timeline-item:nth-child(odd) .timeline-content,
+            .timeline-item:nth-child(even) .timeline-content {
+                margin-left: 3rem;
+                margin-right: 0;
+                text-align: left;
+            }
+        }
+
+        /* FAQ Accordion Styles */
+        .faq-item {
+            background: rgba(26, 51, 82, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: rgba(212, 168, 75, 0.3);
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: rgba(212, 168, 75, 0.05);
+        }
+
+        .faq-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer-content {
+            padding: 0 1.5rem 1.25rem;
+            color: #9ca3af;
+            line-height: 1.7;
+        }
+
+        /* Newsletter Form */
+        .newsletter-form {
+            display: flex;
+            gap: 1rem;
+            max-width: 500px;
+        }
+
+        .newsletter-form .form-input {
+            flex: 1;
+            background: rgba(26, 51, 82, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem 1.5rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .newsletter-form .form-input:focus {
+            outline: none;
+            border-color: #d4a84b;
+            box-shadow: 0 0 0 3px rgba(212, 168, 75, 0.2);
+        }
+
+        .newsletter-form .form-input::placeholder {
+            color: #6b7280;
+        }
+
+        @media (max-width: 640px) {
+            .newsletter-form {
+                flex-direction: column;
+            }
+        }
+
+        /* Mission Category Cards */
+        .mission-card {
+            background: rgba(26, 51, 82, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mission-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #d4a84b, transparent);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .mission-card:hover {
+            border-color: rgba(212, 168, 75, 0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(212, 168, 75, 0.15);
+        }
+
+        .mission-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .mission-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Contact Card Styles */
+        .contact-card {
+            background: rgba(26, 51, 82, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover {
+            border-color: rgba(212, 168, 75, 0.5);
+            transform: translateY(-5px);
+        }
+
+        .contact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Social Media Buttons */
+        .social-btn {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: rgba(26, 51, 82, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-btn:hover {
+            background: #d4a84b;
+            color: #0a1628;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(212, 168, 75, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-dark text-white font-sans">
+    <!-- Aurora Background Layer (Fixed) -->
+    <div class="aurora-container">
+        <div class="aurora-layer aurora-layer-1"></div>
+        <div class="aurora-layer aurora-layer-2"></div>
+        <div class="aurora-layer aurora-layer-3"></div>
+        <div class="aurora-overlay"></div>
+        <div class="aurora-stars"></div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor"></div>
+    <div class="cursor-dot"></div>
+
+    <!-- Page Transition Layer -->
+    <div class="page-transition-layer"></div>
+
+    <!-- Vue App Container -->
+    <div id="app" class="starry-bg min-h-screen relative z-10">
+        <!-- Demo Ribbon -->
+        <div class="demo-ribbon">
+            <span>計中展示版</span>
+        </div>
+
+        <!-- Shooting Stars -->
+        <div class="shooting-stars">
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+        </div>
+
+        <!-- Header -->
+        <header class="header-glass fixed top-0 left-0 right-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 md:h-20">
+                    <!-- Logo -->
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img :src="schoolInfo.logo" alt="校徽" class="h-10 w-10 rounded-full object-cover border-2 border-gold/30">
+                        <div class="hidden sm:block">
+                            <div class="text-lg font-bold text-gold">{{ schoolInfo.name }}</div>
+                            <div class="text-xs text-gray-400">募款平台</div>
+                        </div>
+                    </a>
+
+                    <!-- Navigation -->
+                    <nav class="hidden md:flex items-center gap-8">
+                        <a href="index.html" class="nav-link">首頁</a>
+                        <a href="projects.html" class="nav-link">專案總覽</a>
+                        <a href="about.html" class="nav-link active">關於我們</a>
+                        <a href="honor.html" class="nav-link">芳名錄</a>
+                    </nav>
+
+                    <!-- CTA Button -->
+                    <a href="donate.html" class="btn-gold btn-magnetic ripple text-sm md:text-base" data-gsap="magnetic">
+                        立即捐款
+                    </a>
+
+                    <!-- Mobile Menu Button -->
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 text-gray-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu -->
+                <div v-show="mobileMenuOpen" class="md:hidden py-4 border-t border-white/10">
+                    <nav class="flex flex-col gap-4">
+                        <a href="index.html" class="text-gray-300 hover:text-gold">首頁</a>
+                        <a href="projects.html" class="text-gray-300 hover:text-gold">專案總覽</a>
+                        <a href="about.html" class="text-gold">關於我們</a>
+                        <a href="honor.html" class="text-gray-300 hover:text-gold">芳名錄</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Header Section -->
+        <section class="pt-32 pb-16 relative z-10">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6 gsap-reveal" data-gsap="text-reveal">
+                    <span class="gradient-text">關於臺北市立大學</span>
+                </h1>
+                <p class="text-xl text-gray-400 gsap-reveal" data-gsap="reveal" data-gsap-delay="0.2">
+                    百年樹人，育才興邦<br>
+                    與您攜手共創教育的無限可能
+                </p>
+            </div>
+        </section>
+
+        <!-- School Introduction Section -->
+        <section class="py-16 relative z-10">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <!-- Stats Cards with 3D Effect -->
+                    <div class="glass-card glass-enhanced p-8 card-3d" data-gsap="card">
+                        <div class="card-3d-inner">
+                            <div class="grid grid-cols-2 gap-6 mb-8">
+                                <div class="text-center p-4">
+                                    <div class="stat-number" data-countup data-target="1895" data-gsap="countup">0</div>
+                                    <div class="text-sm text-gray-400 mt-2">創校年份</div>
+                                </div>
+                                <div class="text-center p-4">
+                                    <div class="stat-number" data-countup data-target="8000" data-gsap="countup">0</div>
+                                    <div class="text-sm text-gray-400 mt-2">在校學生</div>
+                                </div>
+                                <div class="text-center p-4">
+                                    <div class="stat-number" data-countup data-target="32" data-gsap="countup">0</div>
+                                    <div class="text-sm text-gray-400 mt-2">奧運獎牌</div>
+                                </div>
+                                <div class="text-center p-4">
+                                    <div class="stat-number" data-countup data-target="2" data-gsap="countup">0</div>
+                                    <div class="text-sm text-gray-400 mt-2">校區數量</div>
+                                </div>
+                            </div>
+                            <div class="flex justify-center">
+                                <img :src="schoolInfo.logo" alt="臺北市立大學校徽" class="h-32 w-32 rounded-full object-cover border-4 border-gold/30">
+                            </div>
+                        </div>
+                        <div class="card-3d-shine"></div>
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <h2 class="text-3xl font-bold mb-6 gradient-text gsap-reveal" data-gsap="text-reveal">學校簡介</h2>
+                        <p class="text-gray-300 mb-4 leading-relaxed gsap-reveal" data-gsap="reveal" data-gsap-delay="0.1">
+                            臺北市立大學（University of Taipei）是臺北市唯一的市立大學，承載著百年教育使命，致力於培育具備專業素養與人文關懷的優秀人才。
+                        </p>
+                        <p class="text-gray-300 mb-4 leading-relaxed gsap-reveal" data-gsap="reveal" data-gsap-delay="0.2">
+                            本校在體育、教育、人文藝術等領域享有卓越聲譽，培養出無數奧運選手與傑出校友。我們不僅追求學術卓越，更重視品格教育與社會責任。
+                        </p>
+                        <p class="text-gray-300 leading-relaxed gsap-reveal" data-gsap="reveal" data-gsap-delay="0.3">
+                            透過您的支持，我們得以持續提升教學品質、培育優秀人才、推動學術研究，為臺灣的教育發展貢獻心力。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline Section -->
+        <section class="timeline-section bg-primary/30 relative z-10">
+            <div class="max-w-4xl mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 gradient-text gsap-reveal" data-gsap="text-reveal">發展歷程</h2>
+                    <p class="text-gray-400 gsap-reveal" data-gsap="reveal" data-gsap-delay="0.1">從創校至今，見證臺灣教育的發展與蛻變</p>
+                </div>
+
+                <div class="timeline-container">
+                    <!-- Timeline Line -->
+                    <div class="timeline-line"></div>
+                    <div class="timeline-line-progress" id="timeline-progress"></div>
+
+                    <!-- Timeline Items -->
+                    <div
+                        v-for="(event, index) in timelineEvents"
+                        :key="index"
+                        class="timeline-item"
+                        data-gsap="timeline-item"
+                    >
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <span class="timeline-year">{{ event.year }}</span>
+                            <div class="timeline-icon">{{ event.icon }}</div>
+                            <h3 class="text-xl font-bold mb-2 text-white">{{ event.title }}</h3>
+                            <p class="text-gray-400">{{ event.description }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mission Section -->
+        <section class="py-16 relative z-10">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 gradient-text gsap-reveal" data-gsap="text-reveal">募款用途</h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto gsap-reveal" data-gsap="reveal" data-gsap-delay="0.1">
+                        您的每一分捐款都將用於提升教育品質，以下是我們目前的重點發展項目
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" data-gsap="cards-container">
+                    <div
+                        v-for="category in filterCategories.filter(c => c.id !== 'all')"
+                        :key="category.id"
+                        class="mission-card card-3d"
+                        data-gsap="card"
+                    >
+                        <div class="card-3d-inner">
+                            <span class="mission-icon">{{ category.icon }}</span>
+                            <h3 class="text-xl font-bold mb-3 text-white">{{ category.name }}</h3>
+                            <p class="text-gray-400 text-sm mb-4">{{ getCategoryDescription(category.id) }}</p>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-500">進行中專案</span>
+                                <span class="text-gold font-bold">{{ getProjectCount(category.id) }} 項</span>
+                            </div>
+                        </div>
+                        <div class="card-3d-shine"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="py-16 bg-primary/30 relative z-10">
+            <div class="max-w-3xl mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 gradient-text gsap-reveal" data-gsap="text-reveal">常見問題</h2>
+                    <p class="text-gray-400 gsap-reveal" data-gsap="reveal" data-gsap-delay="0.1">有任何疑問？這裡可能有您要的答案</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div
+                        v-for="(faq, index) in faqData"
+                        :key="index"
+                        :class="['faq-item gsap-reveal', { 'open': openFaq === index }]"
+                        data-gsap="reveal"
+                        :data-gsap-delay="0.1 * index"
+                    >
+                        <div class="faq-question" @click="toggleFaq(index)">
+                            <span class="font-medium text-white">{{ faq.question }}</span>
+                            <span class="faq-icon text-gold">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">{{ faq.answer }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter Section -->
+        <section class="py-16 relative z-10">
+            <div class="max-w-3xl mx-auto px-4">
+                <div class="glass-card glass-enhanced p-8 md:p-12 text-center card-3d" data-gsap="card">
+                    <div class="card-3d-inner">
+                        <div class="text-4xl mb-4">&#128231;</div>
+                        <h2 class="text-2xl md:text-3xl font-bold mb-4 text-white">訂閱電子報</h2>
+                        <p class="text-gray-400 mb-8">
+                            訂閱我們的電子報，即時收到募款進度、活動訊息與學校最新動態
+                        </p>
+                        <form class="newsletter-form mx-auto" @submit.prevent="subscribeNewsletter">
+                            <input
+                                type="email"
+                                v-model="newsletterEmail"
+                                placeholder="請輸入您的電子郵件"
+                                class="form-input"
+                                required
+                            >
+                            <button type="submit" class="btn-gold btn-magnetic ripple whitespace-nowrap" data-gsap="magnetic">
+                                訂閱
+                            </button>
+                        </form>
+                        <p class="text-xs text-gray-500 mt-4">
+                            我們重視您的隱私，絕不會將您的資料分享給第三方
+                        </p>
+                    </div>
+                    <div class="card-3d-shine"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="py-16 bg-primary/30 relative z-10">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 gradient-text gsap-reveal" data-gsap="text-reveal">聯絡我們</h2>
+                    <p class="text-gray-400 gsap-reveal" data-gsap="reveal" data-gsap-delay="0.1">如有任何問題或合作提案，歡迎與我們聯繫</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8" data-gsap="cards-container">
+                    <!-- Address -->
+                    <div class="contact-card card-3d" data-gsap="card">
+                        <div class="card-3d-inner">
+                            <div class="contact-icon">&#128205;</div>
+                            <h3 class="text-lg font-bold mb-2 text-white">校址</h3>
+                            <p class="text-gray-400">{{ schoolInfo.contact.address }}</p>
+                        </div>
+                        <div class="card-3d-shine"></div>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="contact-card card-3d" data-gsap="card">
+                        <div class="card-3d-inner">
+                            <div class="contact-icon">&#128222;</div>
+                            <h3 class="text-lg font-bold mb-2 text-white">電話</h3>
+                            <p class="text-gray-400">{{ schoolInfo.contact.phone }}</p>
+                        </div>
+                        <div class="card-3d-shine"></div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="contact-card card-3d" data-gsap="card">
+                        <div class="card-3d-inner">
+                            <div class="contact-icon">&#128231;</div>
+                            <h3 class="text-lg font-bold mb-2 text-white">電子郵件</h3>
+                            <p class="text-gray-400">{{ schoolInfo.contact.email }}</p>
+                        </div>
+                        <div class="card-3d-shine"></div>
+                    </div>
+                </div>
+
+                <!-- Social Media -->
+                <div class="text-center mt-12 gsap-reveal" data-gsap="reveal">
+                    <h3 class="text-lg font-bold mb-4 text-white">追蹤我們</h3>
+                    <div class="flex justify-center gap-4">
+                        <a :href="schoolInfo.social.facebook" target="_blank" class="social-btn">
+                            &#128216;
+                        </a>
+                        <a :href="schoolInfo.social.instagram" target="_blank" class="social-btn">
+                            &#128247;
+                        </a>
+                        <a :href="schoolInfo.social.youtube" target="_blank" class="social-btn">
+                            &#128250;
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-20 relative z-10">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6 gradient-text gsap-reveal" data-gsap="text-reveal">
+                    與我們一起創造改變
+                </h2>
+                <p class="text-xl text-gray-400 mb-8 gsap-reveal" data-gsap="reveal" data-gsap-delay="0.1">
+                    您的每一份支持，都是點亮學子夢想的明燈
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 gsap-stagger" data-gsap="reveal" data-gsap-delay="0.2">
+                    <a href="donate.html" class="btn-gold btn-magnetic card-3d ripple text-lg px-10 py-4 animate-pulse-glow" data-gsap="magnetic">
+                        <span class="card-3d-inner">立即捐款</span>
+                    </a>
+                    <a href="projects.html" class="btn-outline text-lg px-10 py-4">
+                        瀏覽專案
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer relative z-10">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="grid md:grid-cols-4 gap-8 mb-8">
+                    <!-- Logo & Info -->
+                    <div class="md:col-span-2">
+                        <div class="flex items-center gap-3 mb-4">
+                            <img :src="schoolInfo.logo" alt="校徽" class="h-12 w-12 rounded-full object-cover">
+                            <div>
+                                <div class="text-lg font-bold text-gold">{{ schoolInfo.name }}</div>
+                                <div class="text-sm text-gray-400">{{ schoolInfo.nameEn }}</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4">
+                            {{ schoolInfo.contact.address }}<br>
+                            電話：{{ schoolInfo.contact.phone }}<br>
+                            Email：{{ schoolInfo.contact.email }}
+                        </p>
+                        <div class="flex gap-4">
+                            <a :href="schoolInfo.social.facebook" target="_blank" class="text-gray-400 hover:text-gold text-xl">&#128216;</a>
+                            <a :href="schoolInfo.social.instagram" target="_blank" class="text-gray-400 hover:text-gold text-xl">&#128247;</a>
+                            <a :href="schoolInfo.social.youtube" target="_blank" class="text-gray-400 hover:text-gold text-xl">&#128250;</a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h4 class="font-bold mb-4">快速連結</h4>
+                        <nav class="flex flex-col gap-2">
+                            <a href="projects.html" class="footer-link">專案總覽</a>
+                            <a href="donate.html" class="footer-link">線上捐款</a>
+                            <a href="honor.html" class="footer-link">芳名錄</a>
+                            <a href="about.html" class="footer-link">關於我們</a>
+                        </nav>
+                    </div>
+
+                    <!-- Legal -->
+                    <div>
+                        <h4 class="font-bold mb-4">法律資訊</h4>
+                        <nav class="flex flex-col gap-2">
+                            <a href="#" class="footer-link">隱私權政策</a>
+                            <a href="#" class="footer-link">使用條款</a>
+                            <a href="#" class="footer-link">捐款須知</a>
+                            <a href="#" class="footer-link">聯絡我們</a>
+                        </nav>
+                    </div>
+                </div>
+
+                <div class="border-t border-white/10 pt-6 text-center text-sm text-gray-500">
+                    <p>&copy; 2025 {{ schoolInfo.name }}. All Rights Reserved.</p>
+                    <p class="mt-2">本網站為展示用途，實際捐款請至學校官方管道</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Back to Top Button -->
+        <button class="back-to-top" aria-label="返回頂端">
+            &#8593;
+        </button>
+    </div>
+
+    <!-- Shared JS (Data & Utilities) -->
+    <script src="js/app.js"></script>
+
+    <!-- GSAP Animations Module -->
+    <script src="js/gsap-animations.js"></script>
+
+    <!-- Page Vue App -->
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    schoolInfo: window.schoolInfo,
+                    projects: window.projectsData,
+                    filterCategories: window.filterCategories,
+                    faqData: window.faqData,
+                    mobileMenuOpen: false,
+                    utils: window.utils,
+                    openFaq: null,
+                    newsletterEmail: '',
+                    timelineEvents: [
+                        {
+                            year: '1895',
+                            icon: '&#127979;',
+                            title: '創校',
+                            description: '臺北市立大學前身「臺灣總督府國語學校」創立，開啟臺灣現代教育的先河。'
+                        },
+                        {
+                            year: '1945',
+                            icon: '&#128214;',
+                            title: '更名省立師範學校',
+                            description: '隨著臺灣光復，學校改制更名，持續培育師資人才。'
+                        },
+                        {
+                            year: '1968',
+                            icon: '&#127941;',
+                            title: '體育專科學校成立',
+                            description: '為培養體育專業人才，成立臺北市立體育專科學校。'
+                        },
+                        {
+                            year: '2013',
+                            icon: '&#127891;',
+                            title: '合併升格為臺北市立大學',
+                            description: '臺北市立教育大學與臺北市立體育學院合併，正式升格為臺北市立大學。'
+                        },
+                        {
+                            year: '2024',
+                            icon: '&#127942;',
+                            title: '持續追求卓越',
+                            description: '累積32面奧運獎牌，培育超過8,000名在校學生，持續在教育與體育領域發光發熱。'
+                        }
+                    ],
+                    categoryDescriptions: {
+                        scholarship: '提供清寒學生獎學金與急難救助金，讓每位學子都能安心就學。',
+                        sports: '支持體育選手培訓、國際賽事參與，為國爭光。',
+                        teaching: '升級智慧教室設備，打造現代化數位學習環境。',
+                        research: '資助學術研究計畫，推動前瞻科技與創新發展。',
+                        campus: '美化校園環境，建設永續綠色校園空間。'
+                    }
+                }
+            },
+            methods: {
+                toggleFaq(index) {
+                    this.openFaq = this.openFaq === index ? null : index;
+                },
+                getCategoryDescription(categoryId) {
+                    return this.categoryDescriptions[categoryId] || '';
+                },
+                getProjectCount(categoryId) {
+                    return this.projects.filter(p => p.category === categoryId).length;
+                },
+                subscribeNewsletter() {
+                    if (this.newsletterEmail && window.utils.validateEmail(this.newsletterEmail)) {
+                        window.toast.show('訂閱成功！感謝您的支持', 'success');
+                        this.newsletterEmail = '';
+                    } else {
+                        window.toast.show('請輸入有效的電子郵件', 'error');
+                    }
+                },
+                initCustomCursor() {
+                    // Only on desktop
+                    if (window.matchMedia('(max-width: 768px)').matches) return;
+
+                    const cursor = document.querySelector('.custom-cursor');
+                    const cursorDot = document.querySelector('.cursor-dot');
+
+                    if (!cursor || !cursorDot) return;
+
+                    document.body.classList.add('custom-cursor-active');
+
+                    let mouseX = 0;
+                    let mouseY = 0;
+                    let cursorX = 0;
+                    let cursorY = 0;
+
+                    document.addEventListener('mousemove', (e) => {
+                        mouseX = e.clientX;
+                        mouseY = e.clientY;
+
+                        // Immediate update for dot
+                        cursorDot.style.left = mouseX + 'px';
+                        cursorDot.style.top = mouseY + 'px';
+                    });
+
+                    // Smooth cursor ring follow
+                    const animateCursor = () => {
+                        cursorX += (mouseX - cursorX) * 0.15;
+                        cursorY += (mouseY - cursorY) * 0.15;
+
+                        cursor.style.left = cursorX + 'px';
+                        cursor.style.top = cursorY + 'px';
+
+                        requestAnimationFrame(animateCursor);
+                    };
+                    animateCursor();
+
+                    // Cursor states for interactive elements
+                    const interactiveElements = document.querySelectorAll('a, button, [role="button"], .faq-question, .mission-card, .contact-card');
+                    interactiveElements.forEach(el => {
+                        el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
+                        el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+                    });
+
+                    // Cursor click effect
+                    document.addEventListener('mousedown', () => cursor.classList.add('cursor-click'));
+                    document.addEventListener('mouseup', () => cursor.classList.remove('cursor-click'));
+
+                    // Hide cursor on text inputs
+                    const textInputs = document.querySelectorAll('input, textarea');
+                    textInputs.forEach(el => {
+                        el.addEventListener('mouseenter', () => cursor.classList.add('cursor-text'));
+                        el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-text'));
+                    });
+                },
+
+                init3DCardTilt() {
+                    const cards = document.querySelectorAll('.card-3d');
+
+                    cards.forEach(card => {
+                        const shine = card.querySelector('.card-3d-shine');
+
+                        card.addEventListener('mousemove', (e) => {
+                            const rect = card.getBoundingClientRect();
+                            const x = e.clientX - rect.left;
+                            const y = e.clientY - rect.top;
+
+                            const centerX = rect.width / 2;
+                            const centerY = rect.height / 2;
+
+                            const rotateX = (y - centerY) / 15;
+                            const rotateY = (centerX - x) / 15;
+
+                            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+
+                            // Update shine position
+                            if (shine) {
+                                shine.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.2) 0%, transparent 80%)`;
+                            }
+                        });
+
+                        card.addEventListener('mouseleave', () => {
+                            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+                        });
+                    });
+                },
+
+                initTimelineAnimations() {
+                    // Register ScrollTrigger
+                    gsap.registerPlugin(ScrollTrigger);
+
+                    const timelineItems = document.querySelectorAll('[data-gsap="timeline-item"]');
+                    const timelineProgress = document.getElementById('timeline-progress');
+
+                    if (timelineItems.length === 0) return;
+
+                    // Timeline line progress animation
+                    if (timelineProgress) {
+                        gsap.fromTo(timelineProgress,
+                            { height: '0%' },
+                            {
+                                height: '100%',
+                                ease: 'none',
+                                scrollTrigger: {
+                                    trigger: '.timeline-container',
+                                    start: 'top 80%',
+                                    end: 'bottom 20%',
+                                    scrub: 1
+                                }
+                            }
+                        );
+                    }
+
+                    // Timeline items staggered reveal
+                    timelineItems.forEach((item, index) => {
+                        const isEven = index % 2 === 1;
+                        const xOffset = isEven ? 50 : -50;
+
+                        gsap.fromTo(item,
+                            {
+                                opacity: 0,
+                                x: xOffset,
+                                y: 30
+                            },
+                            {
+                                opacity: 1,
+                                x: 0,
+                                y: 0,
+                                duration: 0.8,
+                                ease: 'power2.out',
+                                scrollTrigger: {
+                                    trigger: item,
+                                    start: 'top 85%',
+                                    end: 'top 50%',
+                                    toggleActions: 'play none none reverse'
+                                },
+                                onComplete: () => {
+                                    item.classList.add('gsap-animated');
+                                }
+                            }
+                        );
+
+                        // Timeline dot animation
+                        const dot = item.querySelector('.timeline-dot');
+                        if (dot) {
+                            gsap.fromTo(dot,
+                                { scale: 0 },
+                                {
+                                    scale: 1,
+                                    duration: 0.5,
+                                    ease: 'back.out(1.7)',
+                                    scrollTrigger: {
+                                        trigger: item,
+                                        start: 'top 80%',
+                                        toggleActions: 'play none none reverse'
+                                    },
+                                    delay: 0.2
+                                }
+                            );
+                        }
+                    });
+                }
+            },
+            mounted() {
+                // Initialize GSAP Animations
+                if (typeof GSAPAnimations !== 'undefined') {
+                    GSAPAnimations.init();
+                }
+
+                // Initialize Custom Cursor
+                this.initCustomCursor();
+
+                // Initialize 3D Card Tilt Effects
+                this.init3DCardTilt();
+
+                // Initialize Timeline-specific GSAP Animations
+                this.$nextTick(() => {
+                    this.initTimelineAnimations();
+                });
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

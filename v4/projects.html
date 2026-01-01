@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-gsap-manual>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>專案總覽 | 臺北市立大學募款平台</title>
+    <meta name="description" content="瀏覽臺北市立大學所有募款專案，選擇您關心的領域進行捐款支持。">
+    <meta name="keywords" content="臺北市立大學,募款,捐款,教育,獎學金,體育培訓,專案總覽">
+    <meta name="author" content="臺北市立大學">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://utaipei-fundraising.zeabur.app/v4/projects.html">
+    <meta property="og:title" content="專案總覽 | 臺北市立大學募款平台">
+    <meta property="og:description" content="探索多元募款專案，支持教育發展。">
+    <meta property="og:image" content="images/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="專案總覽 | 臺北市立大學募款平台">
+    <meta name="twitter:description" content="探索多元募款專案，支持教育發展。">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://utaipei-fundraising.zeabur.app/v4/projects.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark': '#0a1628',
+                        'primary': '#1e3a5f',
+                        'secondary': '#162d4a',
+                        'card': '#1a3352',
+                        'gold': '#d4a84b',
+                        'gold-light': '#e8c87a',
+                    },
+                    fontFamily: {
+                        'sans': ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Aurora CSS -->
+    <link rel="stylesheet" href="css/aurora.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- GSAP CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="bg-dark text-white font-sans">
+    <!-- Aurora Background Layer (Fixed) -->
+    <div class="aurora-container">
+        <div class="aurora-layer aurora-layer-1"></div>
+        <div class="aurora-layer aurora-layer-2"></div>
+        <div class="aurora-layer aurora-layer-3"></div>
+        <div class="aurora-overlay"></div>
+        <div class="aurora-stars"></div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor"></div>
+    <div class="cursor-dot"></div>
+
+    <!-- Page Transition Layer -->
+    <div class="page-transition-layer"></div>
+
+    <!-- Vue App Container -->
+    <div id="app" class="starry-bg min-h-screen relative z-10">
+        <!-- Demo Ribbon -->
+        <div class="demo-ribbon">
+            <span>V4 Pro</span>
+        </div>
+
+        <!-- Shooting Stars -->
+        <div class="shooting-stars">
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+        </div>
+
+        <!-- Header -->
+        <header class="header-glass fixed top-0 left-0 right-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 md:h-20">
+                    <!-- Logo -->
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img :src="schoolInfo.logo" alt="校徽" class="h-10 w-10 rounded-full object-cover border-2 border-gold/30">
+                        <div class="hidden sm:block">
+                            <div class="text-lg font-bold text-gold">{{ schoolInfo.name }}</div>
+                            <div class="text-xs text-gray-400">募款平台</div>
+                        </div>
+                    </a>
+
+                    <!-- Navigation -->
+                    <nav class="hidden md:flex items-center gap-8">
+                        <a href="index.html" class="nav-link">首頁</a>
+                        <a href="projects.html" class="nav-link active">專案總覽</a>
+                        <a href="about.html" class="nav-link">關於我們</a>
+                        <a href="honor.html" class="nav-link">芳名錄</a>
+                    </nav>
+
+                    <!-- CTA Button -->
+                    <a href="donate.html" class="btn-gold btn-magnetic ripple text-sm md:text-base" data-gsap="magnetic">
+                        立即捐款
+                    </a>
+
+                    <!-- Mobile Menu Button -->
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 text-gray-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu -->
+                <div v-show="mobileMenuOpen" class="md:hidden py-4 border-t border-white/10">
+                    <nav class="flex flex-col gap-4">
+                        <a href="index.html" class="text-gray-300 hover:text-gold">首頁</a>
+                        <a href="projects.html" class="text-gold">專案總覽</a>
+                        <a href="about.html" class="text-gray-300 hover:text-gold">關於我們</a>
+                        <a href="honor.html" class="text-gray-300 hover:text-gold">芳名錄</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Header -->
+        <section class="pt-28 pb-12 relative z-10">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 gradient-text gsap-reveal" data-gsap="text-reveal">
+                    募款專案總覽
+                </h1>
+                <p class="text-gray-400 max-w-2xl mx-auto gsap-reveal" data-gsap="reveal" data-gsap-delay="0.1">
+                    探索我們的各項募款計畫，選擇您最關心的領域，與我們一起為教育注入力量
+                </p>
+            </div>
+        </section>
+
+        <!-- Search & Filter -->
+        <section class="py-6 relative z-10">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between mb-8 gsap-reveal" data-gsap="reveal">
+                    <!-- Search Box -->
+                    <div class="search-box w-full md:w-auto">
+                        <span class="search-icon">🔍</span>
+                        <input
+                            type="text"
+                            v-model="searchQuery"
+                            class="form-input"
+                            placeholder="搜尋專案名稱..."
+                        >
+                        <button v-show="searchQuery" @click="searchQuery = ''" class="clear-btn visible">✕</button>
+                    </div>
+
+                    <!-- Sort -->
+                    <div class="flex items-center gap-4">
+                        <span class="text-gray-400 text-sm">排序：</span>
+                        <select v-model="sortBy" class="form-input py-2 px-4 bg-card border-border-color">
+                            <option value="urgent">緊急優先</option>
+                            <option value="progress">達成率高</option>
+                            <option value="donors">響應人數多</option>
+                            <option value="newest">最新上線</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Filter Tags -->
+                <div class="flex flex-wrap justify-center gap-3 mb-10 gsap-stagger" data-gsap="stagger">
+                    <button
+                        v-for="cat in filterCategories"
+                        :key="cat.id"
+                        @click="activeFilter = cat.id"
+                        :class="['filter-tag', { 'active': activeFilter === cat.id }]"
+                    >
+                        {{ cat.icon }} {{ cat.name }}
+                    </button>
+                </div>
+
+                <!-- Results Count -->
+                <p class="text-gray-400 text-sm mb-6 gsap-reveal" data-gsap="reveal">
+                    顯示 {{ filteredProjects.length }} 個專案
+                </p>
+
+                <!-- Project Grid -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" data-gsap="cards-container">
+                    <div
+                        v-for="project in filteredProjects"
+                        :key="project.id"
+                        :class="['card-project card-3d p-6', { 'urgent': project.isUrgent }]"
+                        data-gsap="card"
+                        @mousemove="handleCardTilt($event, project.id)"
+                        @mouseleave="resetCardTilt(project.id)"
+                        :ref="'card-' + project.id"
+                    >
+                        <div class="card-3d-inner">
+                            <!-- Project Icon & Status -->
+                            <div class="flex items-center justify-between mb-4 card-3d-layer card-3d-layer-1">
+                                <span class="text-4xl">{{ project.icon }}</span>
+                                <span v-if="project.isUrgent" class="px-3 py-1 bg-red-500/20 text-red-400 text-xs rounded-full animate-pulse">
+                                    緊急募款
+                                </span>
+                                <span v-else class="px-3 py-1 bg-gold/20 text-gold text-xs rounded-full">
+                                    進行中
+                                </span>
+                            </div>
+
+                            <!-- Project Name -->
+                            <h3 class="text-xl font-bold mb-2 card-3d-layer card-3d-layer-2">{{ project.name }}</h3>
+                            <p class="text-gray-400 text-sm mb-4">{{ project.description }}</p>
+
+                            <!-- Progress -->
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-gold font-bold">{{ utils.formatCurrency(project.raised) }}</span>
+                                    <span class="text-gray-500">目標 {{ utils.formatCurrency(project.goal) }}</span>
+                                </div>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar-fill" :style="{ width: utils.calcProgress(project.raised, project.goal) + '%' }"></div>
+                                </div>
+                                <div class="flex justify-between text-xs text-gray-500 mt-2">
+                                    <span>{{ utils.calcProgress(project.raised, project.goal) }}% 達成</span>
+                                    <span>{{ project.donors }} 人響應</span>
+                                </div>
+                            </div>
+
+                            <!-- Hover Details -->
+                            <div class="card-details">
+                                <p class="text-sm text-gray-400 mb-3">{{ project.fullDescription }}</p>
+                                <div class="text-sm text-gold mb-3">
+                                    {{ project.impact }}
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                    剩餘 {{ project.daysLeft }} 天
+                                </div>
+                            </div>
+
+                            <!-- CTA -->
+                            <a :href="'donate.html?project=' + project.id" class="btn-gold w-full text-center mt-4 block ripple">
+                                支持此專案
+                            </a>
+                        </div>
+                        <div class="card-3d-shine"></div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div v-if="filteredProjects.length === 0" class="text-center py-16">
+                    <div class="text-6xl mb-4">🔍</div>
+                    <h3 class="text-xl font-bold mb-2">找不到符合的專案</h3>
+                    <p class="text-gray-400 mb-6">請嘗試其他搜尋條件或類別</p>
+                    <button @click="resetFilters" class="btn-outline">
+                        清除篩選條件
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-16 relative z-10">
+            <div class="max-w-3xl mx-auto px-4 text-center">
+                <div class="glass-card glass-enhanced p-8 card-3d" data-gsap="reveal">
+                    <div class="card-3d-inner">
+                        <h2 class="text-2xl font-bold mb-4 gradient-text">找不到想支持的專案？</h2>
+                        <p class="text-gray-400 mb-6">
+                            您也可以選擇「不指定用途」，讓學校將您的善款用於最需要的地方
+                        </p>
+                        <a href="donate.html" class="btn-gold btn-magnetic ripple" data-gsap="magnetic">
+                            彈性捐款
+                        </a>
+                    </div>
+                    <div class="card-3d-shine"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer relative z-10">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="grid md:grid-cols-4 gap-8 mb-8">
+                    <!-- Logo & Info -->
+                    <div class="md:col-span-2">
+                        <div class="flex items-center gap-3 mb-4">
+                            <img :src="schoolInfo.logo" alt="校徽" class="h-12 w-12 rounded-full object-cover">
+                            <div>
+                                <div class="text-lg font-bold text-gold">{{ schoolInfo.name }}</div>
+                                <div class="text-sm text-gray-400">{{ schoolInfo.nameEn }}</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-4">
+                            {{ schoolInfo.contact.address }}<br>
+                            電話：{{ schoolInfo.contact.phone }}<br>
+                            Email：{{ schoolInfo.contact.email }}
+                        </p>
+                        <div class="flex gap-4">
+                            <a :href="schoolInfo.social.facebook" target="_blank" class="text-gray-400 hover:text-gold text-xl">📘</a>
+                            <a :href="schoolInfo.social.instagram" target="_blank" class="text-gray-400 hover:text-gold text-xl">📷</a>
+                            <a :href="schoolInfo.social.youtube" target="_blank" class="text-gray-400 hover:text-gold text-xl">📺</a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h4 class="font-bold mb-4">快速連結</h4>
+                        <nav class="flex flex-col gap-2">
+                            <a href="projects.html" class="footer-link">專案總覽</a>
+                            <a href="donate.html" class="footer-link">線上捐款</a>
+                            <a href="honor.html" class="footer-link">芳名錄</a>
+                            <a href="about.html" class="footer-link">關於我們</a>
+                        </nav>
+                    </div>
+
+                    <!-- Legal -->
+                    <div>
+                        <h4 class="font-bold mb-4">法律資訊</h4>
+                        <nav class="flex flex-col gap-2">
+                            <a href="#" class="footer-link">隱私權政策</a>
+                            <a href="#" class="footer-link">使用條款</a>
+                            <a href="#" class="footer-link">捐款須知</a>
+                            <a href="#" class="footer-link">聯絡我們</a>
+                        </nav>
+                    </div>
+                </div>
+
+                <div class="border-t border-white/10 pt-6 text-center text-sm text-gray-500">
+                    <p>&copy; 2025 {{ schoolInfo.name }}. All Rights Reserved.</p>
+                    <p class="mt-2">本網站為展示用途，實際捐款請至學校官方管道</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Back to Top Button -->
+        <button class="back-to-top" aria-label="返回頂端">
+            ↑
+        </button>
+    </div>
+
+    <!-- Shared JS (Data & Utilities) -->
+    <script src="js/app.js"></script>
+
+    <!-- GSAP Animations Module -->
+    <script src="js/gsap-animations.js"></script>
+
+    <!-- Three.js Effects Module -->
+    <script src="js/three-effects.js"></script>
+
+    <!-- Page Vue App -->
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    schoolInfo: window.schoolInfo,
+                    projects: window.projectsData,
+                    filterCategories: window.filterCategories,
+                    activeFilter: 'all',
+                    searchQuery: '',
+                    sortBy: 'urgent',
+                    mobileMenuOpen: false,
+                    utils: window.utils,
+                    cardTilts: {}
+                }
+            },
+            computed: {
+                filteredProjects() {
+                    let result = this.projects;
+
+                    // Filter by category
+                    if (this.activeFilter !== 'all') {
+                        result = result.filter(p => p.category === this.activeFilter);
+                    }
+
+                    // Filter by search
+                    if (this.searchQuery.trim()) {
+                        const query = this.searchQuery.toLowerCase();
+                        result = result.filter(p =>
+                            p.name.toLowerCase().includes(query) ||
+                            p.description.toLowerCase().includes(query)
+                        );
+                    }
+
+                    // Sort
+                    result = [...result].sort((a, b) => {
+                        switch(this.sortBy) {
+                            case 'urgent':
+                                return (b.isUrgent ? 1 : 0) - (a.isUrgent ? 1 : 0);
+                            case 'progress':
+                                return this.utils.calcProgress(b.raised, b.goal) - this.utils.calcProgress(a.raised, a.goal);
+                            case 'donors':
+                                return b.donors - a.donors;
+                            default:
+                                return a.id - b.id;
+                        }
+                    });
+
+                    return result;
+                }
+            },
+            mounted() {
+                // Initialize GSAP Animations
+                if (typeof GSAPAnimations !== 'undefined') {
+                    GSAPAnimations.init();
+                }
+
+                // Initialize Custom Cursor
+                this.initCustomCursor();
+
+                // Initialize Back to Top
+                this.initBackToTop();
+            },
+            methods: {
+                resetFilters() {
+                    this.activeFilter = 'all';
+                    this.searchQuery = '';
+                    this.sortBy = 'urgent';
+                },
+
+                handleCardTilt(event, cardId) {
+                    const card = event.currentTarget;
+                    const rect = card.getBoundingClientRect();
+                    const x = event.clientX - rect.left;
+                    const y = event.clientY - rect.top;
+
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    const rotateX = (y - centerY) / 12;
+                    const rotateY = (centerX - x) / 12;
+
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+
+                    // Update shine effect
+                    const shine = card.querySelector('.card-3d-shine');
+                    if (shine) {
+                        shine.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.25) 0%, transparent 70%)`;
+                    }
+                },
+
+                resetCardTilt(cardId) {
+                    const cards = document.querySelectorAll('.card-project');
+                    cards.forEach(card => {
+                        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+                    });
+                },
+
+                initCustomCursor() {
+                    // Only on desktop
+                    if (window.matchMedia('(max-width: 768px)').matches) return;
+
+                    const cursor = document.querySelector('.custom-cursor');
+                    const cursorDot = document.querySelector('.cursor-dot');
+
+                    if (!cursor || !cursorDot) return;
+
+                    document.body.classList.add('custom-cursor-active');
+
+                    let mouseX = 0;
+                    let mouseY = 0;
+                    let cursorX = 0;
+                    let cursorY = 0;
+
+                    document.addEventListener('mousemove', (e) => {
+                        mouseX = e.clientX;
+                        mouseY = e.clientY;
+
+                        // Immediate update for dot
+                        cursorDot.style.left = mouseX + 'px';
+                        cursorDot.style.top = mouseY + 'px';
+                    });
+
+                    // Smooth cursor ring follow
+                    const animateCursor = () => {
+                        cursorX += (mouseX - cursorX) * 0.15;
+                        cursorY += (mouseY - cursorY) * 0.15;
+
+                        cursor.style.left = cursorX + 'px';
+                        cursor.style.top = cursorY + 'px';
+
+                        requestAnimationFrame(animateCursor);
+                    };
+                    animateCursor();
+
+                    // Cursor states for interactive elements
+                    const interactiveElements = document.querySelectorAll('a, button, [role="button"], .card-project, .filter-tag');
+                    interactiveElements.forEach(el => {
+                        el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
+                        el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+                    });
+
+                    // Cursor click effect
+                    document.addEventListener('mousedown', () => cursor.classList.add('cursor-click'));
+                    document.addEventListener('mouseup', () => cursor.classList.remove('cursor-click'));
+
+                    // Hide cursor on text inputs
+                    const textInputs = document.querySelectorAll('input, textarea, select');
+                    textInputs.forEach(el => {
+                        el.addEventListener('mouseenter', () => cursor.classList.add('cursor-text'));
+                        el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-text'));
+                    });
+                },
+
+                initBackToTop() {
+                    const backToTop = document.querySelector('.back-to-top');
+                    if (!backToTop) return;
+
+                    window.addEventListener('scroll', () => {
+                        if (window.scrollY > 500) {
+                            backToTop.classList.add('visible');
+                        } else {
+                            backToTop.classList.remove('visible');
+                        }
+                    });
+
+                    backToTop.addEventListener('click', () => {
+                        if (typeof gsap !== 'undefined') {
+                            gsap.to(window, {
+                                duration: 0.8,
+                                scrollTo: { y: 0 },
+                                ease: 'power2.inOut'
+                            });
+                        } else {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                    });
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
