@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>專案總覽 | 臺北市立大學募款平台</title>
+    <meta name="description" content="瀏覽臺北市立大學所有募款專案，選擇您關心的領域進行捐款支持。">
+    <meta property="og:title" content="專案總覽 | 臺北市立大學募款平台">
+    <meta property="og:description" content="探索多元募款專案，支持教育發展。">
+    <link rel="canonical" href="https://utaipei-fundraising.zeabur.app/v3/projects.html">
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark': '#0a1628',
+                        'primary': '#1e3a5f',
+                        'secondary': '#162d4a',
+                        'card': '#1a3352',
+                        'gold': '#d4a84b',
+                        'gold-light': '#e8c87a',
+                    },
+                    fontFamily: {
+                        'sans': ['Noto Sans TC', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="bg-dark text-white font-sans">
+    <div id="app" class="starry-bg min-h-screen">
+        <div class="demo-ribbon"><span>📋 計中展示版</span></div>
+        <div class="shooting-stars">
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+            <div class="shooting-star"></div>
+        </div>
+
+        <!-- Header -->
+        <header class="header-glass fixed top-0 left-0 right-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 md:h-20">
+                    <a href="index.html" class="flex items-center gap-3">
+                        <img :src="schoolInfo.logo" alt="校徽" class="h-10 w-10 rounded-full object-cover border-2 border-gold/30">
+                        <div class="hidden sm:block">
+                            <div class="text-lg font-bold text-gold">{{ schoolInfo.name }}</div>
+                            <div class="text-xs text-gray-400">募款平台</div>
+                        </div>
+                    </a>
+                    <nav class="hidden md:flex items-center gap-8">
+                        <a href="index.html" class="nav-link">首頁</a>
+                        <a href="projects.html" class="nav-link active">專案總覽</a>
+                        <a href="about.html" class="nav-link">關於我們</a>
+                        <a href="honor.html" class="nav-link">芳名錄</a>
+                    </nav>
+                    <a href="donate.html" class="btn-gold ripple text-sm md:text-base">立即捐款</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Header -->
+        <section class="pt-28 pb-12 relative z-10">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 gradient-text">募款專案總覽</h1>
+                <p class="text-gray-400 max-w-2xl mx-auto">
+                    探索我們的各項募款計畫，選擇您最關心的領域，與我們一起為教育注入力量
+                </p>
+            </div>
+        </section>
+
+        <!-- Search & Filter -->
+        <section class="py-6 relative z-10">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
+                    <!-- Search Box -->
+                    <div class="search-box w-full md:w-auto">
+                        <span class="search-icon">🔍</span>
+                        <input
+                            type="text"
+                            v-model="searchQuery"
+                            class="form-input"
+                            placeholder="搜尋專案名稱..."
+                        >
+                        <button v-show="searchQuery" @click="searchQuery = ''" class="clear-btn visible">✕</button>
+                    </div>
+
+                    <!-- Sort -->
+                    <div class="flex items-center gap-4">
+                        <span class="text-gray-400 text-sm">排序：</span>
+                        <select v-model="sortBy" class="form-input py-2 px-4 bg-card border-border-color">
+                            <option value="urgent">緊急優先</option>
+                            <option value="progress">達成率高</option>
+                            <option value="donors">響應人數多</option>
+                            <option value="newest">最新上線</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Filter Tags -->
+                <div class="flex flex-wrap justify-center gap-3 mb-10">
+                    <button
+                        v-for="cat in filterCategories"
+                        :key="cat.id"
+                        @click="activeFilter = cat.id"
+                        :class="['filter-tag', { 'active': activeFilter === cat.id }]"
+                    >
+                        {{ cat.icon }} {{ cat.name }}
+                    </button>
+                </div>
+
+                <!-- Results Count -->
+                <p class="text-gray-400 text-sm mb-6">
+                    顯示 {{ filteredProjects.length }} 個專案
+                </p>
+
+                <!-- Project Grid -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div
+                        v-for="project in filteredProjects"
+                        :key="project.id"
+                        :class="['card-project p-6', { 'urgent': project.isUrgent }]"
+                        data-animate="fade-in-up"
+                    >
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-4xl">{{ project.icon }}</span>
+                            <span v-if="project.isUrgent" class="px-3 py-1 bg-red-500/20 text-red-400 text-xs rounded-full animate-pulse">
+                                🔥 緊急募款
+                            </span>
+                            <span v-else class="px-3 py-1 bg-gold/20 text-gold text-xs rounded-full">
+                                進行中
+                            </span>
+                        </div>
+
+                        <h3 class="text-xl font-bold mb-2">{{ project.name }}</h3>
+                        <p class="text-gray-400 text-sm mb-4">{{ project.description }}</p>
+
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gold font-bold">{{ utils.formatCurrency(project.raised) }}</span>
+                                <span class="text-gray-500">目標 {{ utils.formatCurrency(project.goal) }}</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" :style="{ width: utils.calcProgress(project.raised, project.goal) + '%' }"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500 mt-2">
+                                <span>{{ utils.calcProgress(project.raised, project.goal) }}% 達成</span>
+                                <span>{{ project.donors }} 人響應</span>
+                            </div>
+                        </div>
+
+                        <!-- Hover Details -->
+                        <div class="card-details">
+                            <p class="text-sm text-gray-400 mb-3">{{ project.fullDescription }}</p>
+                            <div class="text-sm text-gold mb-3">
+                                💡 {{ project.impact }}
+                            </div>
+                            <div class="text-xs text-gray-500">
+                                ⏰ 剩餘 {{ project.daysLeft }} 天
+                            </div>
+                        </div>
+
+                        <a :href="'donate.html?project=' + project.id" class="btn-gold w-full text-center mt-4 block ripple">
+                            支持此專案
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div v-if="filteredProjects.length === 0" class="text-center py-16">
+                    <div class="text-6xl mb-4">🔍</div>
+                    <h3 class="text-xl font-bold mb-2">找不到符合的專案</h3>
+                    <p class="text-gray-400">請嘗試其他搜尋條件或類別</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-16 relative z-10">
+            <div class="max-w-3xl mx-auto px-4 text-center">
+                <div class="glass-card p-8">
+                    <h2 class="text-2xl font-bold mb-4">找不到想支持的專案？</h2>
+                    <p class="text-gray-400 mb-6">
+                        您也可以選擇「不指定用途」，讓學校將您的善款用於最需要的地方
+                    </p>
+                    <a href="donate.html" class="btn-gold ripple">
+                        彈性捐款
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer relative z-10">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <p class="text-gray-500">© 2025 {{ schoolInfo.name }}. All Rights Reserved.</p>
+                <p class="text-gray-600 text-sm mt-2">本網站為展示用途</p>
+            </div>
+        </footer>
+
+        <button class="back-to-top" aria-label="返回頂端">↑</button>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        const { createApp } = Vue;
+        createApp({
+            data() {
+                return {
+                    schoolInfo: window.schoolInfo,
+                    projects: window.projectsData,
+                    filterCategories: window.filterCategories,
+                    activeFilter: 'all',
+                    searchQuery: '',
+                    sortBy: 'urgent',
+                    utils: window.utils
+                }
+            },
+            computed: {
+                filteredProjects() {
+                    let result = this.projects;
+
+                    // Filter by category
+                    if (this.activeFilter !== 'all') {
+                        result = result.filter(p => p.category === this.activeFilter);
+                    }
+
+                    // Filter by search
+                    if (this.searchQuery.trim()) {
+                        const query = this.searchQuery.toLowerCase();
+                        result = result.filter(p =>
+                            p.name.toLowerCase().includes(query) ||
+                            p.description.toLowerCase().includes(query)
+                        );
+                    }
+
+                    // Sort
+                    result = [...result].sort((a, b) => {
+                        switch(this.sortBy) {
+                            case 'urgent':
+                                return (b.isUrgent ? 1 : 0) - (a.isUrgent ? 1 : 0);
+                            case 'progress':
+                                return this.utils.calcProgress(b.raised, b.goal) - this.utils.calcProgress(a.raised, a.goal);
+                            case 'donors':
+                                return b.donors - a.donors;
+                            default:
+                                return a.id - b.id;
+                        }
+                    });
+
+                    return result;
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
